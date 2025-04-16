@@ -1134,7 +1134,7 @@ class RbList extends React.Component {
       protocolFilter: this.props.protocolFilter || wpc.protocolFilter,
       sort: sort,
       reload: reload,
-      statsField: wpc.statsField === true && rb.commercial > 0,
+      statsField: wpc.statsField === true,
     }
     this.__lastQueryEntry = query
 
