@@ -229,4 +229,23 @@ public class GeneralListController extends EntityController {
 
         return StringUtils.join(quickFieldsLabel, " / ");
     }
+    
+    /**
+     * 获取选中列表统计数据
+
+     * @param request HTTP请求对象
+     * @return 统计结果数组
+     */
+    @PostMapping("data-list-stats")
+    public RespBody dataListStats(HttpServletRequest request) {
+        final ID user = getRequestUser(request);
+        final JSON formJson = ServletUtils.getRequestJson(request);
+        
+        // 构建查询对象
+        DataListBuilder listBuilder = new DataListBuilderImpl((JSONObject) formJson, user);
+        
+        // 仅返回统计数据
+        JSONArray stats = ((DataListBuilderImpl) listBuilder).getJSONStats();
+        return RespBody.ok(stats);
+    }
 }
