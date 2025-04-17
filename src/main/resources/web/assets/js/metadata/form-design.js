@@ -75,10 +75,7 @@ $(document).ready(() => {
   })
 
   $('.J_add-refform').on('click', () => {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
+
     $('.nav-tabs-classic a[href="#form-design"]').tab('show')
     render_item({ fieldName: REFFORM_LINE, fieldLabel: '', colspan: 4 })
   })
@@ -93,10 +90,7 @@ $(document).ready(() => {
 
   // v3.7, v3.8
   $('.J_add-nform').on('click', () => {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
+
     renderRbcomp(<DlgNForm entity={wpc.entityName} />)
   })
   wpc.formsAttr &&
@@ -202,11 +196,6 @@ $(document).ready(() => {
   })()
 
   $('.nav-tabs-classic a[href="#adv-control"]').on('click', (e) => {
-    if (rb.commercial < 10) {
-      e.preventDefault()
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
 
     // 只显示布局的
     const shows = []
