@@ -164,11 +164,7 @@ $(document).ready(() => {
           $(`<a class="dropdown-item">${$L('配置顶部菜单')} <sup class="rbv"></sup></a>`)
             .prependTo($menu)
             .on('click', () => {
-              if (rb.commercial < 1) {
-                RbHighbar.error(WrapHtml($L('免费版不支持顶部菜单功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-              } else {
-                renderRbcomp(<TopNavSettings list={alist} />)
-              }
+              renderRbcomp(<TopNavSettings list={alist} />)
             })
         })
       } else {
