@@ -75,11 +75,6 @@ public class DataImportController extends BaseController {
             return null;
         }
 
-        if (!viaAdmin) {
-            RbAssert.isCommercial(
-                    Language.L("免费版不支持非管理员用户数据导入 [(查看详情)](https://getrebuild.com/docs/rbv-features)"));
-        }
-
         return createModelAndView(viaAdmin ? "/admin/data/data-imports" : "/general/data-imports");
     }
 

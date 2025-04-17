@@ -220,18 +220,6 @@ class ContentSendNotification extends ActionContentSpec {
   }
 
   buildContent() {
-    if (rb.commercial < 10 && this.state.type === 4) {
-      RbHighbar.error(WrapHtml($L('免费版不支持企业微信群功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
-    if (rb.commercial < 10 && this.state.type === 5) {
-      RbHighbar.error(WrapHtml($L('免费版不支持钉钉群功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
-    if (rb.commercial < 10 && this.state.type === 6) {
-      RbHighbar.error(WrapHtml($L('免费版不支持飞书群功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
 
     let sendTo = this.state.userType === 2 ? this._sendTo2.getSelected() : this._sendTo1.getSelected()
     if (this.state.userType === 20) sendTo = $val(this._sendTo20)

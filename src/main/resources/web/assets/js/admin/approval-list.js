@@ -249,10 +249,6 @@ class ApprovalReferral extends RbModalHandler {
   }
 
   start() {
-    if (rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持批量转审功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const post = {
       oldUser: this._UserSelector1.val()[0],

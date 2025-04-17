@@ -133,10 +133,6 @@ $(document).ready(() => {
 
   const $btn = $('.J_save').on('click', function () {
     const importsMode = $('#importsMode').prop('checked')
-    if (importsMode && rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持启用明细记录导入 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const fm = _FieldsMapping.buildMapping()
     if (fm === false) return

@@ -686,11 +686,6 @@ class BatchApprove extends BatchOperator {
   }
 
   handleConfirm() {
-    if (rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持批量审批功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
-
     if (!this.state.approveState) return RbHighbar.create($L('请选择审批结果'))
 
     const _data = {

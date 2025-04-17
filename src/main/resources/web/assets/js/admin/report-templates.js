@@ -358,10 +358,6 @@ class ReportEditor extends ConfigFormDlg {
   }
 
   _useFilter() {
-    if (rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     if (this._UseFilter) {
       this._UseFilter.show()
@@ -396,12 +392,6 @@ class ReportEditor extends ConfigFormDlg {
       if (!entity) return false
     } else {
       if (!file || !entity) return false
-    }
-
-    if ((type === 4 || type === 3) && rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持 WORD 和网页模板功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      this._clearParams()
-      return false
     }
 
     return `file=${$encode(file)}&entity=${entity}&type=${type || ''}`
@@ -448,10 +438,6 @@ class ReportEditor extends ConfigFormDlg {
       }
       post.extraDefinition.templateVersion = 3
 
-      if ((post.templateType === 4 || post.templateType === 3) && rb.commercial < 10) {
-        RbHighbar.error(WrapHtml($L('免费版不支持 WORD 和网页模板功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-        return
-      }
     }
 
     post.metadata = {

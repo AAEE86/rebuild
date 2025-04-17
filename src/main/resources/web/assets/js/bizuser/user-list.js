@@ -95,11 +95,7 @@ $(document).ready(() => {
       )
     }
   })
-  if (rb.commercial < 1) {
-    $('.J_batch2, .J_delete2')
-      .off('click')
-      .on('click', () => RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)'))))
-  }
+
 
   $('.ufilters')
     .next()
@@ -264,10 +260,6 @@ class UserResigntion extends RbModalHandler {
   }
 
   start() {
-    if (rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持离职继任功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const post = {
       oldUser: this._UserSelector1.val()[0],
