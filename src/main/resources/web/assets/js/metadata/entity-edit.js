@@ -76,11 +76,6 @@ $(document).ready(() => {
           break
         }
       }
-
-      if (needRbv) {
-        RbHighbar.error(WrapHtml($L('免费版不支持高级选项 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-        return
-      }
     }
 
     extConfig = wpc.extConfig ? { ...wpc.extConfig, ...extConfig } : extConfig
