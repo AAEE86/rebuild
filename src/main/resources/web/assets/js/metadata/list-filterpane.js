@@ -33,10 +33,6 @@ $(document).ready(() => {
     .disableSelection()
 
   const $btn = $('.J_save').on('click', () => {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const config = { items: [] }
     $('.set-items > span').each(function () {
