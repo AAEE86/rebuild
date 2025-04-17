@@ -422,7 +422,7 @@ class ReportEditor extends ConfigFormDlg {
       outputType: output.length === 0 ? 'excel' : output.join(','),
       templateVersion: (this.props.extraDefinition || {}).templateVersion || 2,
       // v3.7
-      useFilter: rb.commercial < 1 ? null : this.state.useFilter,
+      useFilter: this.state.useFilter,
     }
 
     if (this.props.id) {

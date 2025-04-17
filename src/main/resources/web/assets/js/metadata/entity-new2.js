@@ -93,7 +93,7 @@ class EntityNew2 extends RbModalHandler {
                       {this.state.entities &&
                         this.state.entities.map((item) => {
                           if (item.mainEntity) return null
-                          if (item.detailEntity && rb.commercial < 10) return null
+                          if (item.detailEntity) return null
                           return (
                             <option key={item.entityName} value={item.entityName}>
                               {item.entityLabel}

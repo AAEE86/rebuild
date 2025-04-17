@@ -57,24 +57,22 @@ $(document).ready(() => {
     extConfig.enableRecordMerger = $val('#enableRecordMerger')
 
     // v3.6
-    if (rb.commercial < 10) {
-      const checkAdv = [
-        'detailsNotEmpty',
-        'detailsGlobalRepeat',
-        'detailsShowAt2',
-        'detailsCopiable',
-        'detailsSeq',
-        'detailsHide',
-        'repeatFieldsCheckMode',
-        'disabledViewEditable',
-        'enableRecordMerger',
-      ]
-      let needRbv = false
-      for (let i = 0; i < checkAdv.length; i++) {
-        if ($val(`#${checkAdv[i]}`)) {
-          needRbv = true
-          break
-        }
+    const checkAdv = [
+      'detailsNotEmpty',
+      'detailsGlobalRepeat',
+      'detailsShowAt2',
+      'detailsCopiable',
+      'detailsSeq',
+      'detailsHide',
+      'repeatFieldsCheckMode',
+      'disabledViewEditable',
+      'enableRecordMerger',
+    ]
+    let needRbv = false
+    for (let i = 0; i < checkAdv.length; i++) {
+      if ($val(`#${checkAdv[i]}`)) {
+        needRbv = true
+        break
       }
     }
 

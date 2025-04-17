@@ -46,7 +46,7 @@ class RbViewForm extends React.Component {
 
       let hadApproval = res.data.hadApproval
       let hadAlert = null
-      let hadSop = res.data.hadSop && rb.commercial > 1
+      let hadSop = res.data.hadSop
       if (wpc.type === 'DetailView') {
         if (hadApproval === 2 || hadApproval === 10) {
           if (window.RbViewPage) window.RbViewPage.setReadonly()

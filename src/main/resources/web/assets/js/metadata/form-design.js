@@ -94,21 +94,20 @@ $(document).ready(() => {
     renderRbcomp(<DlgNForm entity={wpc.entityName} />)
   })
   wpc.formsAttr &&
-    wpc.formsAttr.forEach((item) => {
-      const $item = $(`<a class="dropdown-item" href="?id=${item.id}"></a>`).appendTo('.form-action-menu')
-      const $title = $(`<span>${item.name || $L('默认布局')}</span>`).appendTo($item)
-      if (!item.name) $title.addClass('text-muted')
+  wpc.formsAttr.forEach((item) => {
+    const $item = $(`<a class="dropdown-item" href="?id=${item.id}"></a>`).appendTo('.form-action-menu')
+    const $title = $(`<span>${item.name || $L('默认布局')}</span>`).appendTo($item)
+    if (!item.name) $title.addClass('text-muted')
 
-      const $action = $(`<div class="action"><span title="${$L('修改')}"><i class="zmdi zmdi-edit"></i></span></div>`).appendTo($item)
-      $action.find('span').on('click', (e) => {
-        $stopEvent(e, true)
-        renderRbcomp(<DlgNForm entity={wpc.entityName} id={item.id} name={item.name} attrs={item.shareTo} />)
-        $('.form-action-menu').prev().dropdown('toggle') // hide
-      })
-
-      if (rb.commercial < 1) $action.find('span').remove()
-      if (wpc.formConfig.id === item.id) $item.addClass('check')
+    const $action = $(`<div class="action"><span title="${$L('修改')}"><i class="zmdi zmdi-edit"></i></span></div>`).appendTo($item)
+    $action.find('span').on('click', (e) => {
+      $stopEvent(e, true)
+      renderRbcomp(<DlgNForm entity={wpc.entityName} id={item.id} name={item.name} attrs={item.shareTo} />)
+      $('.form-action-menu').prev().dropdown('toggle') // hide
     })
+
+    if (wpc.formConfig.id === item.id) $item.addClass('check')
+  })
   // 无
   if (!wpc.formConfig.id) {
     $(`<a class="dropdown-item text-disabled">${$L('无')}</a>`).appendTo('.form-action-menu')

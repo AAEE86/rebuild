@@ -90,10 +90,8 @@ $(document).ready(() => {
       )
     })
   }
-  if (rb.commercial >= 10) {
-    $('.on-timers select').on('change', () => $setTimeout(evalTriggerTimes, 500, 'eval-trigger-times'))
-    $('.on-timers input').on('input', () => $setTimeout(evalTriggerTimes, 500, 'eval-trigger-times'))
-  }
+  $('.on-timers select').on('change', () => $setTimeout(evalTriggerTimes, 500, 'eval-trigger-times'))
+  $('.on-timers input').on('input', () => $setTimeout(evalTriggerTimes, 500, 'eval-trigger-times'))
 
   let advFilter
   $('.J_whenFilter .btn').on('click', () => {
@@ -197,7 +195,7 @@ $(document).ready(() => {
     })
   })
 
-  if (LastLogsViewer.renderLog && rb.commercial > 1) {
+  if (LastLogsViewer.renderLog) {
     $.get(`/admin/robot/trigger/last-logs?id=${wpc.configId}`, (res) => {
       const _data = res.data || {}
       if (_data.logs && _data.logs.length > 0) {

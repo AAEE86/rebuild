@@ -38,7 +38,7 @@ $(document).ready(() => {
       $('.J_cloudAccount').removeClass('hide')
       $('.J_has-bind').removeClass('hide')
       $('.J_has-bind a').text(bindAccount)
-    } else if (rb.commercial === 10 || rb.commercial === 20) {
+    } else {
       $('.J_cloudAccount').removeClass('hide')
       $('.J_not-bind').removeClass('hide')
       $('.J_not-bind .btn').on('click', () => {
@@ -292,11 +292,6 @@ class DlgMM extends RbAlert {
 // ~~ App
 
 $(document).ready(() => {
-  if (rb.commercial < 10) {
-    $('.td-MobileAppPath button').remove()
-    return
-  }
-
   const renderMobileAppPath = function (key) {
     $('.td-MobileAppPath>a').text($fileCutName(key)).attr({
       href: '../h5app-download',

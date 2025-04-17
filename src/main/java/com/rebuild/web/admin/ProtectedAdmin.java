@@ -47,7 +47,7 @@ public class ProtectedAdmin {
      * @return
      */
     public static boolean allow(String uriOrKey, ID adminUser) {
-        if (!License.isRbvAttached()) return true;
+
         if (UserService.ADMIN_USER.equals(adminUser)) return true;
 
         if (PA == null) {
