@@ -155,10 +155,6 @@ $(document).ready(() => {
     $('.J_when input:checked').each(function () {
       when += ~~$(this).val()
     })
-    if (rb.commercial < 10 && ((when & 512) !== 0 || (when & 1024) !== 0 || (when & 2048) !== 0)) {
-      RbHighbar.error(WrapHtml($L('免费版不支持审批提交时/审批驳回时/定时执行功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const content = contentComp.buildContent()
     if (content === false) return
@@ -395,10 +391,6 @@ function useExecManual() {
   }
 
   $('.J_exec-manual').on('click', () => {
-    if (rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持立即执行功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     RbAlert.create(
       <RF>
@@ -494,10 +486,6 @@ class DlgSpecFields extends RbModalHandler {
   }
 
   handleConfirm() {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const selected = []
     $(this._$fields)
@@ -597,10 +585,6 @@ class DlgSpecApproveNodes extends RbModalHandler {
   }
 
   handleConfirm() {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
 
     const selected = $(this._$set).val()
     typeof this.props.onConfirm === 'function' && this.props.onConfirm(selected)
