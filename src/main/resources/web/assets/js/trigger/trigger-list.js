@@ -316,11 +316,6 @@ class TriggerEdit extends ConfigFormDlg {
       id: this.props.id || null,
     }
 
-    if (rb.commercial < 10 && Object.keys(RBV_TRIGGERS).includes(data.actionType)) {
-      RbHighbar.error(WrapHtml($L('免费版不支持%s功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)', RBV_TRIGGERS[data.actionType])))
-      return
-    }
-
     this.disabled(true)
     $.post('/app/entity/common-save', JSON.stringify(data), (res) => {
       if (res.error_code === 0) {
