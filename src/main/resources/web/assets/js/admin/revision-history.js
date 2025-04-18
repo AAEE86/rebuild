@@ -223,7 +223,11 @@ class HistoryViewport extends React.Component {
 }
 
 function ContentsGroup({ contents }) {
-  const _FN = function (v) {
+  const _FN = function (v, item, key) {
+    // 优先显示后端返回的友好文本
+    if (key === 'before' && item.beforeText) return item.beforeText
+    if (key === 'after' && item.afterText) return item.afterText
+
     if (v === true) return $L('是')
     else if (v === false) return $L('否')
     else if (v === 0) return 0
@@ -248,10 +252,10 @@ function ContentsGroup({ contents }) {
             <tr key={item.field}>
               <td>{item.field}</td>
               <td>
-                <div>{_FN(item.before)}</div>
+                <div>{_FN(item.before, item, 'before')}</div>
               </td>
               <td>
-                <div>{_FN(item.after)}</div>
+                <div>{_FN(item.after, item, 'after')}</div>
               </td>
             </tr>
           )
