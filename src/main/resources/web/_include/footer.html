@@ -22,7 +22,7 @@
   <script th:src="@{/assets/js/file-preview.js}" type="text/babel"></script>
   <script th:src="@{/assets/js/media-capturer.js}" type="text/babel"></script>
   <script th:src="@{/assets/js/settings-share2.js}" type="text/babel"></script>
-  <th:block th:if="${user != null && commercial > 1}">
+  <th:block th:if="${commercial > 1}">
     <script th:src="@{/assets/js/frontjs/frontjs-sdk.js}" type="text/babel"></script>
     <script th:src="@{/commons/frontjs/use-frontjs}" type="text/babel"></script>
   </th:block>
@@ -32,6 +32,9 @@
     <link rel="stylesheet" type="text/css" th:href="@{/assets/css/rebuild-tour.css}" />
     <script th:src="@{/assets/js/rebuild-tour.js}" type="text/babel"></script>
   </th:block>
+  <link rel="stylesheet" type="text/css" th:href="@{/assets/css/chat.css}" />
+  <script th:src="@{/assets/js/aibot/chat.js}" type="text/babel"></script>
+  <script th:src="@{/assets/js/aibot/aibot.js}" type="text/babel"></script>
 </th:block>
 <!--
 <script src="https://unpkg.com/vconsole@latest/dist/vconsole.min.js"></script>
