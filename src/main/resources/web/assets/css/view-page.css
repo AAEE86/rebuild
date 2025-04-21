@@ -536,7 +536,6 @@ body {
 .view-history .view-history-items > li {
   position: relative;
   padding-left: 24px;
-  height: 28px;
   color: #777;
 }
 
