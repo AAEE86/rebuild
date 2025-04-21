@@ -62,16 +62,17 @@ body {
 }
 
 .view-header .header-icon {
-  float: left;
+  float: right;
 }
 
 .view-header .title {
   line-height: 1.428571;
-  display: inline-block;
+  /*display: inline-block;*/
   margin: 0;
   font-weight: 300;
   font-size: 1.538rem;
   max-width: 80%;
+  float: right;
 }
 
 .view-header .title > .badge {
@@ -86,6 +87,7 @@ body {
   padding: 1rem;
   height: 40px;
   margin: -7px -1rem -1rem auto;
+  float: left;
 }
 
 .view-header > span > .close.sm {

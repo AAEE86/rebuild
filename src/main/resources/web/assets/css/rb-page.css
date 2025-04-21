@@ -741,6 +741,7 @@ div.dataTables_filter .filter-badge:hover .close {
 .rbmodal.show,
 .rbview.show {
   display: block !important;
+  pointer-events: none !important;
 }
 
 .rbmodal.use-white .modal-header {
@@ -778,6 +779,9 @@ div.dataTables_filter .filter-badge:hover .close {
 
 .modal-backdrop.show.rbalert {
   z-index: 1050;
+}
+.modal-backdrop {
+  display: none !important;
 }
 
 .modal-body.iframe {
