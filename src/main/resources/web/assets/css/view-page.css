@@ -82,16 +82,16 @@ body {
 }
 
 .view-header > span > .close {
-  font-size: 1.638rem;
-  opacity: 0.6;
+  font-size: 2.5rem;
+  opacity: 1;
   padding: 1rem;
   height: 40px;
-  margin: -7px -1rem -1rem auto;
+  margin: -10px -1rem -1rem auto;
   float: left;
 }
 
 .view-header > span > .close.sm {
-  font-size: 1.45rem;
+  font-size: 2rem;
   margin-right: -7px;
 }
 
