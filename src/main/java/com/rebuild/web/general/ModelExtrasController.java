@@ -55,6 +55,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Iterator;
+import java.util.Collection;
 
 /**
  * 表单/视图 功能扩展
@@ -435,5 +436,185 @@ public class ModelExtrasController extends BaseController {
         } catch (Exception e) {
             return null;
         }
+    }
+    /**
+     * 评估简易过滤器条件
+     * 
+     * @param request
+     * @return
+     */
+    @PostMapping("easyfilter-eval")
+    public JSONAware evalEasyFilter(HttpServletRequest request) {
+        final ID user = getRequestUser(request);
+        final String layoutId = getParameterNotNull(request, "layout");
+        final String recordId = getParameter(request, "id");
+        
+        // 获取布局配置
+        Object[] config = Application.createQueryNoFilter(
+                "select config from LayoutConfig where configId = ?")
+                .setParameter(1, ID.valueOf(layoutId))
+                .unique();
+        if (config == null) {
+            return RespBody.error("Layout config not found");
+        }
+        
+        JSONArray layoutConfig = JSON.parseArray((String) config[0]);
+        JSONObject formData = (JSONObject) ServletUtils.getRequestJson(request);
+        
+        List<JSONObject> results = new ArrayList<>();
+        
+        for (Object item : layoutConfig) {
+            JSONObject fieldConfig = (JSONObject) item;
+            String fieldName = fieldConfig.getString("field");
+            
+            JSONObject result = new JSONObject();
+            result.put("field", fieldName);
+            
+            // 评估隐藏条件
+            JSONObject hiddenFilter = fieldConfig.getJSONObject("hiddenOnEasyFilter");
+            if (hiddenFilter != null) {
+                boolean hidden = evalFilterCondition(hiddenFilter, formData, user, recordId);
+                result.put("hidden", hidden);
+            }
+            
+            // 评估必填条件 
+            JSONObject requiredFilter = fieldConfig.getJSONObject("requiredOnEasyFilter");
+            if (requiredFilter != null) {
+                boolean required = evalFilterCondition(requiredFilter, formData, user, recordId);
+                result.put("required", required);
+            }
+            
+            // 评估只读条件
+            JSONObject readonlyFilter = fieldConfig.getJSONObject("readonlyOnEasyFilter");
+            if (readonlyFilter != null) {
+                boolean readonly = evalFilterCondition(readonlyFilter, formData, user, recordId);
+                result.put("readonly", readonly);
+            }
+            
+            results.add(result);
+        }
+        
+        return (JSONAware) JSON.toJSON(results);
+    }
+    
+    /**
+     * 评估过滤器条件
+     * 
+     * @param filter
+     * @param formData
+     * @param user
+     * @param recordId
+     * @return
+     */
+    private boolean evalFilterCondition(JSONObject filter, JSONObject formData, ID user, String recordId) {
+        String equation = filter.getString("equation");
+        JSONArray items = filter.getJSONArray("items");
+
+        
+        // 如果没有条件项，直接返回false
+        if (items == null || items.isEmpty()) {
+            return false;
+        }
+        
+        boolean result = "AND".equalsIgnoreCase(equation);
+        
+        for (Object item : items) {
+            JSONObject condition = (JSONObject) item;
+            String field = condition.getString("field");
+            String op = condition.getString("op");
+            Object value = condition.get("value");
+            
+            // 获取表单字段值
+            Object fieldValue = formData.get(field);
+            
+            // 评估单个条件
+            boolean conditionResult = evalSingleCondition(fieldValue, op, value, user, recordId);
+            
+            // 根据逻辑运算符组合结果
+            if ("AND".equalsIgnoreCase(equation)) {
+                result = result && conditionResult;
+                if (!result) break; // AND 短路优化
+            } else {
+                result = result || conditionResult;
+                if (result) break; // OR 短路优化
+            }
+        }
+        
+        return result;
+    }
+    
+    /**
+     * 评估单个条件
+     * 
+     * @param fieldValue
+     * @param op
+     * @param value
+     * @param user
+     * @param recordId
+     * @return
+     */
+    private boolean evalSingleCondition(Object fieldValue, String op, Object value, ID user, String recordId) {
+        if (fieldValue == null) {
+            return "NL".equals(op) || "NT".equals(op);
+        }
+        
+        switch (op) {
+            case "EQ":
+                return Objects.equals(fieldValue, value);
+            case "NEQ":
+                return !Objects.equals(fieldValue, value);
+            case "GT":
+                return compareNumbers(fieldValue, value) > 0;
+            case "LT":
+                return compareNumbers(fieldValue, value) < 0;
+            case "GE":
+                return compareNumbers(fieldValue, value) >= 0;
+            case "LE":
+                return compareNumbers(fieldValue, value) <= 0;
+            case "LK":
+                return fieldValue.toString().contains(value.toString());
+            case "NLK":
+                return !fieldValue.toString().contains(value.toString());
+            case "IN":
+                return evalInCondition(fieldValue, value);
+            case "NIN":
+                return !evalInCondition(fieldValue, value);
+            case "NL":
+                return false;
+            case "NT":
+                return false;
+            default:
+                return false;
+        }
+    }
+    
+    /**
+     * 评估IN条件
+     * 
+     * @param fieldValue
+     * @param value
+     * @return
+     */
+    private boolean evalInCondition(Object fieldValue, Object value) {
+        if (value instanceof JSONArray) {
+            JSONArray values = (JSONArray) value;
+            return values.contains(fieldValue);
+        } else if (value instanceof Collection) {
+            return ((Collection<?>) value).contains(fieldValue);
+        }
+        return Objects.equals(fieldValue, value);
+    }
+    
+    /**
+     * 比较数字值
+     * 
+     * @param fieldValue
+     * @param value
+     * @return
+     */
+    private int compareNumbers(Object fieldValue, Object value) {
+        Number num1 = fieldValue instanceof Number ? (Number) fieldValue : Double.parseDouble(fieldValue.toString());
+        Number num2 = value instanceof Number ? (Number) value : Double.parseDouble(value.toString());
+        return Double.compare(num1.doubleValue(), num2.doubleValue());
     }
 }
