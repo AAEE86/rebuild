@@ -11,6 +11,7 @@ import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.engine.ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
 import com.rebuild.api.RespBody;
 import com.rebuild.core.Application;
 import com.rebuild.core.configuration.ConfigBean;
@@ -23,7 +24,6 @@ import com.rebuild.core.service.datareport.DataReportManager;
 import com.rebuild.core.service.trigger.ActionFactory;
 import com.rebuild.core.service.trigger.ActionType;
 import com.rebuild.core.service.trigger.TriggerAction;
-import com.rebuild.core.support.License;
 import com.rebuild.core.support.i18n.Language;
 import com.rebuild.utils.JSONUtils;
 import com.rebuild.web.BaseController;
@@ -46,7 +46,7 @@ import java.util.List;
  * @since 2019/05/23
  */
 @RestController
-@RequestMapping("/admin/robot/")
+@RequestMapping({"/admin/robot/", "/admin/trigger/"})
 public class TriggerAdminController extends BaseController {
 
     @GetMapping("triggers")
@@ -185,5 +185,66 @@ public class TriggerAdminController extends BaseController {
         }
 
         return null;
+    }
+
+    /**
+     * 获取可用于自动生成报表的列表
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("auto-gen-report-alist")
+    public RespBody getAutoGenReportList(HttpServletRequest request) {
+        String entity = getParameterNotNull(request, "entity");
+        boolean isDetail = getBoolParameter(request, "detail", false);
+        
+        Entity sourceEntity = MetadataHelper.getEntity(entity);
+        if (isDetail && sourceEntity.getMainEntity() != null) {
+            sourceEntity = sourceEntity.getMainEntity();
+        }
+        
+        JSONArray reports = new JSONArray();
+        for (ConfigBean e : DataReportManager.instance.getReportsRaw(sourceEntity)) {
+            if (e.getBoolean("disabled")) continue;
+            
+            JSONObject item = new JSONObject();
+            item.put("id", e.getID("id"));
+            item.put("name", e.getString("name"));
+            reports.add(item);
+        }
+        
+        return RespBody.ok(reports);
+    }
+    
+    /**
+     * 获取可用于自动记录转换的列表
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("auto-transform-alist")
+    public RespBody getAutoTransformList(HttpServletRequest request) {
+        String entity = getParameterNotNull(request, "entity");
+        Entity sourceEntity = MetadataHelper.getEntity(entity);
+        
+        JSONArray transforms = new JSONArray();
+        for (ConfigBean cb : TransformManager.instance.getRawTransforms(entity)) {
+            if (cb.getBoolean("disabled")) continue;
+            
+            JSONObject config = (JSONObject) cb.getJSON("config");
+            // 过滤尚未配置的
+            if (config == null) continue;
+            
+            // 无字段映射
+            JSONObject fieldsMapping = config.getJSONObject("fieldsMapping");
+            if (fieldsMapping == null || fieldsMapping.isEmpty()) continue;
+            
+            JSONObject item = new JSONObject();
+            item.put("id", cb.getID("id"));
+            item.put("name", cb.getString("name"));
+            transforms.add(item);
+        }
+        
+        return RespBody.ok(transforms);
     }
 }

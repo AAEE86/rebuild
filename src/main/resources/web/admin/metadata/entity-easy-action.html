@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="~{/_include/header}" />
+  <meta name="page-help" content="https://getrebuild.com/docs/admin/entity/easy-actions" />
+  <title>[[${bundle.L('自定义操作')}]]</title>
+  <style>
+.ee-left{width:280px;float:left;background-color:#fff;background-color:#eee;padding:6px;position:sticky;top:80px}.ee-right{margin-left:305px}.ee-left .dd3-content>.zmdi{position:absolute;margin-left:-22px;font-size:1.45rem;margin-top:1px}.ee-left .dd3-content>.mdi{font-size:1.385rem;margin-top:0;margin-left:-24px}.ee-left .dd3-content{padding-left:64px!important;cursor:default}.ee-left .dd-item>ul{margin-left:17px;padding-left:0;position:relative}div.simple,form.simple .form-control,form.simple .input-group,form.simple .select2{max-width:485px}form.simple .form-group>label{font-weight:700}.J_edit-menu:empty::after{content:attr(_title);color:#777}.input-group-prepend .input-group-text{width:37px;text-align:center;display:inline-block;overflow:hidden;padding:9px 0 0;background-color:#fff}.input-group-prepend .input-group-text:hover{background-color:#eee;cursor:pointer}.input-group-prepend .input-group-text .mdi,.input-group-prepend .input-group-text .zmdi{font-size:1.45rem;margin-top:-1px}.op2-edit .sortable-box,.op3-edit .op3-updates{max-width:485px;padding:0;border:0 none}.op2-edit .select2-container--default .select2-selection--single .select2-selection__arrow b::after{font-family:'Material Design Icons',serif;content:'\f0415';font-size:1.4rem;margin-left:-2px}.op2-edit .sortable-box{height:auto;max-height:306px}.op2-edit .sortable-box .dd-list{height:auto;max-height:300px}.op2-edit .sortable-box .dd-list:empty::before{padding:0}.op3-edit .op3-updates>.row{margin-bottom:10px;position:relative}.op3-edit .op3-updates>.row a.del{position:absolute;right:-8px;font-size:14px;padding:8px 4px;display:none}.op3-edit .op3-updates>.row:hover a.del{display:inline-block}
+  </style>
+</head>
+<body class="open-right-sidebar">
+  <div class="rb-wrapper rb-fixed-sidebar rb-collapsible-sidebar rb-collapsible-sidebar-hide-logo rb-aside rb-color-header" th:classappend="${sideCollapsedClazz}">
+    <th:block th:replace="~{/_include/nav-top}" />
+    <th:block th:replace="~{/_include/nav-left-admin(active='entities')}" />
+    <div class="rb-content">
+      <aside class="page-aside">
+        <div class="rb-scroller-aside rb-scroller">
+          <div class="aside-content">
+            <div class="content">
+              <div class="aside-header">
+                <button class="navbar-toggle collapsed" type="button"><span class="icon zmdi zmdi-caret-down"></span></button>
+                <span class="title">[[${entityLabel}]]</span>
+                <p class="description">[[${comments}]]</p>
+              </div>
+            </div>
+            <th:block th:replace="~{/admin/metadata/subnav-entity(active='easy-actions')}" />
+          </div>
+        </div>
+      </aside>
+      <div class="page-head"> 
+        <div class="page-head-title"> 
+          自定义操作 
+          <i class="support-plat2 mdi mdi-monitor mt-2" title="PC 端适用"></i> 
+        </div> 
+      </div>
+      <div class="main-content container-fluid pt-0">
+        <div>
+          <div class="float-right">
+            <button class="btn btn-primary J_save" type="button">[[${bundle.L('保存')}]]</button>
+          </div>
+          <ul class="nav nav-tabs nav-tabs-classic J_type">
+            <li class="nav-item"><a href="?type=datalist" class="nav-link">[[${bundle.L('数据列表页')}]]</a></li>
+            <li class="nav-item"><a href="?type=datarow" class="nav-link">[[${bundle.L('数据列表行')}]]</a></li>
+            <li class="nav-item"><a href="?type=view" class="nav-link">[[${bundle.L('详情页')}]]</a></li>
+          </ul>
+        </div>
+        <div class="card mb-0">
+          <div class="card-body pt-4 pb-4 datalist">
+            <div class="ee-left">
+              <div class="sortable-box rb-scroller ps-container ps-theme-default">
+                <ol class="dd-list J_config ui-sortable" _title="无">
+                  <!-- 动态生成的操作项列表 -->
+                </ol>
+              </div>
+              <div class="actions">
+                <button type="button" class="btn btn-link btn-sm w-100 J_add-menu">+ [[${bundle.L('添加操作项')}]]</button>
+              </div>
+            </div>
+            <div class="ee-right">
+              <div class="J_edit-menu" th:_title="${bundle.L('点击左侧操作项进行编辑')}"></div>
+            </div>
+            <div class="clearfix"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <th:block th:replace="~{/_include/footer}" />
+  <script>
+    window.__PageConfig = { 
+      id: '[[${entityMetaId}]]',
+      entityName: '[[${entityName}]]',
+      mainEntity: '[[${mainEntity}]]', 
+      configId: '[[${configId}]]',
+      config: [(${config ?:'null'})],
+    }
+  </script>
+  <script th:src="@{/assets/js/general/rb-advfilter.js}"></script>
+  <script th:src="@{/assets/js/show-styles.js}"></script>
+  <script th:src="@{/assets/js/metadata/entity-switch.js}"></script>
+  <script th:src="@{/assets/js/metadata/field-valueset.js}"></script>
+  <script th:src="@{/assets/js/metadata/entity-easy-action.js}"></script>
+</body>
+</html>

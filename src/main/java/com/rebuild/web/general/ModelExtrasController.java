@@ -617,4 +617,60 @@ public class ModelExtrasController extends BaseController {
         Number num2 = value instanceof Number ? (Number) value : Double.parseDouble(value.toString());
         return Double.compare(num1.doubleValue(), num2.doubleValue());
     }
+
+    /**
+     * 检查自定义操作按钮是否显示
+     * 
+     * @param request
+     * @return
+     */
+    @PostMapping("check-easyaction")
+    public JSONAware checkEasyAction(HttpServletRequest request) {
+        final ID user = getRequestUser(request);
+        final String recordId = getParameterNotNull(request, "record");
+        
+        JSONArray items = (JSONArray) ServletUtils.getRequestJson(request);
+        if (items == null || items.isEmpty()) {
+            return RespBody.ok(new JSONObject());
+        }
+        
+        JSONObject result = new JSONObject();
+        for (int i = 0; i < items.size(); i++) {
+            JSONObject item = items.getJSONObject(i);
+            String itemId = item.getString("id");
+            
+            // 获取过滤条件
+            JSONObject showFilter = item.getJSONObject("showFilter");
+            if (showFilter == null || showFilter.isEmpty()) {
+                result.put(itemId, true);
+                continue;
+            }
+            
+            // 评估过滤条件
+            boolean show = true;
+            if (ID.isId(recordId)) {
+                // 获取记录数据
+                Entity entity = MetadataHelper.getEntity(ID.valueOf(recordId).getEntityCode());
+                String sql = String.format("select * from %s where %s = '%s'",
+                        entity.getName(), entity.getPrimaryField().getName(), recordId);
+                Object[] record = Application.createQueryNoFilter(sql).unique();
+                
+                if (record != null) {
+                    // 构建记录数据
+                    JSONObject formData = new JSONObject();
+                    for (int j = 0; j < entity.getFields().length; j++) {
+                        Field field = entity.getFields()[j];
+                        formData.put(field.getName(), record[j]);
+                    }
+                    
+                    // 评估条件
+                    show = evalFilterCondition(showFilter, formData, user, recordId);
+                }
+            }
+            
+            result.put(itemId, show);
+        }
+        
+        return RespBody.ok(result);
+    }
 }

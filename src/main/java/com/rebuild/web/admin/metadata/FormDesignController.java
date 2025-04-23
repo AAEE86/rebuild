@@ -112,4 +112,10 @@ public class FormDesignController extends BaseController {
 
         return RespBody.ok();
     }
+
+    @GetMapping("get-forms-attr")
+    public RespBody getFormsAttr(@PathVariable String entity) {
+        List<ConfigBean> attrs = FormsManager.instance.getAllFormsAttr(entity);
+        return RespBody.ok(attrs);
+    }
 }
