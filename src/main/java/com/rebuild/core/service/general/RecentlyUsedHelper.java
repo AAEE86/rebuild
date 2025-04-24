@@ -89,11 +89,6 @@ public class RecentlyUsedHelper {
                     || Application.getPrivilegesManager().allowRead(user, raw);
             if (!allowRead) continue;
 
-            // 添加分类数据项隐藏状态检查
-            if (entityCode == EntityHelper.ClassificationData && !isClassificationItemVisible(raw)) {
-                continue;
-            }
-
             // 是否符合条件
             if (checkFilter != null) {
                 if (!QueryHelper.isMatchFilter(raw, checkFilter)) continue;
