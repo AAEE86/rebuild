@@ -1008,6 +1008,10 @@ a.link.link-icon::after {
   margin-right: 15px;
 }
 
+.form-layout .collapsed-hide {
+  display: none !important;
+}
+
 .rbform > .row.form {
   padding-top: 5px;
   padding-bottom: 5px;

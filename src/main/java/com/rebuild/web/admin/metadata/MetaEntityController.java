@@ -38,6 +38,7 @@ import com.rebuild.core.privileges.UserHelper;
 import com.rebuild.core.rbstore.MetaschemaExporter;
 import com.rebuild.core.service.general.QuickCodeReindexTask;
 import com.rebuild.core.service.general.series.SeriesGeneratorFactory;
+import com.rebuild.core.support.License;
 import com.rebuild.core.support.RebuildConfiguration;
 import com.rebuild.core.support.general.FieldValueHelper;
 import com.rebuild.core.support.task.TaskExecutors;
@@ -209,6 +210,7 @@ public class MetaEntityController extends EntityController {
             if (useMain.getMainEntity() != null) {
                 return RespBody.errorl("明细实体不能作为主实体");
             }
+
         }
 
         try {
