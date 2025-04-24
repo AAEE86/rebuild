@@ -98,10 +98,10 @@ public class RecentlyUsedHelper {
             if (checkFilter != null) {
                 if (!QueryHelper.isMatchFilter(raw, checkFilter)) continue;
             }
-            // fix:4.0.2
+            // fix:4.0.3
             if (entityCode == EntityHelper.ClassificationData) {
                 ClassificationManager.Item item = ClassificationManager.instance.getItem(raw);
-                if (item == null || item.isHide()) continue;
+                if (item == null || isItemHide(item)) continue;
             }
 
             try {
@@ -171,38 +171,10 @@ public class RecentlyUsedHelper {
         return String.format("RS31.%s-%s-%s", user, entity, StringUtils.defaultIfBlank(type, StringUtils.EMPTY));
     }
 
-    /**
-     * 检查分类数据项是否可见（未隐藏）
-     *
-     * @param itemId 分类项ID
-     * @return true 如果分类项可见
-     */
-    private static boolean isClassificationItemVisible(ID itemId) {
-        String sql = "select isHide,parent from ClassificationData where itemId = ?";
-        Object[] current = Application.createQuery(sql).setParameter(1, itemId).unique();
-        
-        // 记录不存在
-        if (current == null) return false;
-        
-        // 当前项被隐藏
-        if ((Boolean) current[0]) return false;
-        
-        // 检查所有父级
-        ID parentId = current[1] == null ? null : (ID) current[1];
-        while (parentId != null) {
-            Object[] parent = Application.createQuery(sql)
-                    .setParameter(1, parentId)
-                    .unique();
-            
-            // 父级记录不存在或被隐藏
-            if (parent == null || (Boolean) parent[0]) {
-                return false;
-            }
-            
-            // 继续检查上一级父级
-            parentId = parent[1] == null ? null : (ID) parent[1];
-        }
-        
-        return true;
+    // 分类项是否已禁用（含父级）
+    private static boolean isItemHide(ClassificationManager.Item item) {
+        if (item == null || item.isHide()) return true;
+        if (item.getParent() != null) return isItemHide(ClassificationManager.instance.getItem(item.getParent()));
+        return false;
     }
 }
