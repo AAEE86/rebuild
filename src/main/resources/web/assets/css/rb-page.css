@@ -5978,20 +5978,22 @@ div.formula-code {
 
 .level-tabs {
   display: flex;
-  border-bottom: 1px solid #ddd;
   margin-bottom: 10px;
+  overflow-x: auto;
 }
 
 .level-tab {
-  padding: 5px 10px;
+  padding: 6px 12px;
+  margin-right: 8px;
   cursor: pointer;
-  margin-right: 5px;
+  border-radius: 4px;
+  background-color: #f0f0f0;
+  white-space: nowrap;
 }
 
 .level-tab.active {
-  border-bottom: 2px solid #007bff;
-  color: #007bff;
-  font-weight: bold;
+  background-color: #007bff;
+  color: white;
 }
 
 .items-container {
@@ -6042,13 +6044,25 @@ div.formula-code {
 }
 
 .selected-path {
-  padding: 5px;
-  border: 1px dashed #ddd;
+  padding: 8px 12px;
+  background-color: #f8f9fa;
   border-radius: 4px;
-  min-height: 30px;
+  margin-top: 15px;
 }
 
 .selected-path-text {
   color: #007bff;
   font-weight: bold;
+}
+
+.input-group.input-search.mb-2{
+  width:340px
+}
+
+.search-results {
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  flex: 1;
+  padding: 5px
 }
