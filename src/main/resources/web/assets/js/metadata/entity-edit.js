@@ -57,29 +57,22 @@ $(document).ready(() => {
     extConfig.enableRecordMerger = $val('#enableRecordMerger')
 
     // v3.6
-    if (rb.commercial < 10) {
-      const checkAdv = [
-        'detailsNotEmpty',
-        'detailsGlobalRepeat',
-        'detailsShowAt2',
-        'detailsCopiable',
-        'detailsSeq',
-        'detailsHide',
-        'repeatFieldsCheckMode',
-        'disabledViewEditable',
-        'enableRecordMerger',
-      ]
-      let needRbv = false
-      for (let i = 0; i < checkAdv.length; i++) {
-        if ($val(`#${checkAdv[i]}`)) {
-          needRbv = true
-          break
-        }
-      }
-
-      if (needRbv) {
-        RbHighbar.error(WrapHtml($L('免费版不支持高级选项 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-        return
+    const checkAdv = [
+      'detailsNotEmpty',
+      'detailsGlobalRepeat',
+      'detailsShowAt2',
+      'detailsCopiable',
+      'detailsSeq',
+      'detailsHide',
+      'repeatFieldsCheckMode',
+      'disabledViewEditable',
+      'enableRecordMerger',
+    ]
+    let needRbv = false
+    for (let i = 0; i < checkAdv.length; i++) {
+      if ($val(`#${checkAdv[i]}`)) {
+        needRbv = true
+        break
       }
     }
 

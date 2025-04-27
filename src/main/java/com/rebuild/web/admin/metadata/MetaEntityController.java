@@ -211,10 +211,6 @@ public class MetaEntityController extends EntityController {
                 return RespBody.errorl("明细实体不能作为主实体");
             }
 
-            if (useMain.getDetailEntity() != null && !License.isCommercial()) {
-                return RespBody.errorl(
-                        "免费版不支持%s功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)", "多明细");
-            }
         }
 
         try {

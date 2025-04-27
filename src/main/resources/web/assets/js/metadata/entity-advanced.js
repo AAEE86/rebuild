@@ -72,10 +72,6 @@ $(document).ready(() => {
 
 // 列表模式
 function _listmodeAction() {
-  if (rb.commercial < 10) {
-    $('.mode-select .btn').on('click', () => RbHighbar.error(WrapHtml($L('免费版不支持列表模式功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)'))))
-    return
-  }
   if (!wpc.id) {
     $('.mode-select .btn').on('click', () => RbHighbar.create($L('系统内置实体暂不支持')))
     return

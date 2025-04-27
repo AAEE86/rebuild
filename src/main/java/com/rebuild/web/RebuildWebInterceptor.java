@@ -310,7 +310,7 @@ public class RebuildWebInterceptor implements AsyncHandlerInterceptor, InstallSt
 
     private void checkSafeUse(String ipAddr, String requestUri) throws DefinedException {
         if (!License.isRbvAttached()) return;
-
+        
         if ("localhost".equals(ipAddr) || "127.0.0.1".equals(ipAddr)) {
             log.debug("Allow localhost/127.0.0.1 use : {}", requestUri);
             return;

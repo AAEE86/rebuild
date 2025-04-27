@@ -935,17 +935,6 @@ class ApproverNodeConfig extends StartNodeConfig {
       return
     }
 
-    if (rb.commercial < 1) {
-      if (d.allowReferral || d.allowCountersign || d.allowBatch) {
-        RbHighbar.error(WrapHtml($L('免费版不支持转审/加签/批量审批功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-        return
-      }
-      if (~~expiresAuto.expiresAuto > 0) {
-        RbHighbar.error(WrapHtml($L('免费版不支持限时审批功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-        return
-      }
-    }
-
     typeof this.props.call === 'function' && this.props.call(d)
     this.cancel()
   }
@@ -1039,11 +1028,6 @@ class CCNodeConfig extends StartNodeConfig {
       selfSelecting: this.state.selfSelecting,
       ccAutoShare: this.state.ccAutoShare,
       accounts: this._UserSelector2.getSelected(),
-    }
-
-    if (d.accounts.length > 1 && rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持抄送给外部人员功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
     }
 
     if (d.users.length === 0 && !d.selfSelecting) {

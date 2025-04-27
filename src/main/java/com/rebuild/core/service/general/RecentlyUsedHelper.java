@@ -169,7 +169,12 @@ public class RecentlyUsedHelper {
     // 分类项是否已禁用（含父级）
     private static boolean isItemHide(ClassificationManager.Item item) {
         if (item == null || item.isHide()) return true;
-        if (item.getParent() != null) return isItemHide(ClassificationManager.instance.getItem(item.getParent()));
+        if (item.getParent() != null) {
+            // 强制刷新父级缓存
+            Application.getCommonsCache().evict("ClassificationITEM403-" + item.getParent());
+            ClassificationManager.Item parent = ClassificationManager.instance.getItem(item.getParent());
+            return isItemHide(parent);
+        }
         return false;
     }
 }

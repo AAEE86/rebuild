@@ -251,6 +251,45 @@ public class MetaFieldController extends BaseController {
         return RespBody.ok(list);
     }
 
+    /**
+     * 字段类型转换
+     */
+    @RequestMapping("field-type-cast")
+    public RespBody fieldTypeCast(HttpServletRequest request) {
+        String entity = getParameterNotNull(request, "entity");
+        String field = getParameterNotNull(request, "field");
+        String toType = getParameterNotNull(request, "toType");
+        
+        Entity entityMeta = MetadataHelper.getEntity(entity);
+        Field fieldMeta = entityMeta.getField(field);
+        
+        // 获取目标类型
+        DisplayType targetType;
+        try {
+            targetType = DisplayType.valueOf(toType);
+        } catch (IllegalArgumentException e) {
+            return RespBody.errorl("无效的字段类型");
+        }
+        
+        // 获取当前字段类型
+        EasyField easyField = EasyMetaFactory.valueOf(fieldMeta);
+        DisplayType currentType = easyField.getDisplayType();
+        
+        // 如果类型相同，直接返回成功
+        if (currentType == targetType) {
+            return RespBody.ok();
+        }
+        
+        // 执行类型转换
+        boolean force = getBoolParameter(request, "force", false);
+        try {
+            boolean success = new Field2Schema(getRequestUser(request)).castType(fieldMeta, targetType, force);
+            return success ? RespBody.ok() : RespBody.errorl("类型转换失败");
+        } catch (Exception ex) {
+            return RespBody.error(ex.getLocalizedMessage());
+        }
+    }
+
     // 获取共同引用字段
     private List<JSONObject> getCoReferenceFields(Entity entity, Entity referenceEntity, boolean fromDetail) {
         Field[] entityFields = MetadataSorter.sortFields(entity, DisplayType.REFERENCE);

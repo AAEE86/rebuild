@@ -686,11 +686,6 @@ class BatchApprove extends BatchOperator {
   }
 
   handleConfirm() {
-    if (rb.commercial < 10) {
-      RbHighbar.error(WrapHtml($L('免费版不支持批量审批功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return
-    }
-
     if (!this.state.approveState) return RbHighbar.create($L('请选择审批结果'))
 
     const _data = {
@@ -1134,7 +1129,7 @@ class RbList extends React.Component {
       protocolFilter: this.props.protocolFilter || wpc.protocolFilter,
       sort: sort,
       reload: reload,
-      statsField: wpc.statsField === true && rb.commercial > 0,
+      statsField: wpc.statsField === true,
     }
     this.__lastQueryEntry = query
 
@@ -1257,7 +1252,7 @@ class RbList extends React.Component {
     // 分页组件
     if (this._Pagination) {
       this._Pagination.setState({ selectedTotal: chkSelected }, () => {
-        if (wpc.statsField !== true || rb.commercial < 10) return
+        if (wpc.statsField !== true) return
 
         if (chkSelected > 1) {
           const ids = this.getSelectedIds(true)

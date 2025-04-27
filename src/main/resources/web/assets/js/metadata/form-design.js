@@ -75,10 +75,7 @@ $(document).ready(() => {
   })
 
   $('.J_add-refform').on('click', () => {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
+
     $('.nav-tabs-classic a[href="#form-design"]').tab('show')
     render_item({ fieldName: REFFORM_LINE, fieldLabel: '', colspan: 4 })
   })
@@ -93,28 +90,24 @@ $(document).ready(() => {
 
   // v3.7, v3.8
   $('.J_add-nform').on('click', () => {
-    if (rb.commercial < 1) {
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
+
     renderRbcomp(<DlgNForm entity={wpc.entityName} />)
   })
   wpc.formsAttr &&
-    wpc.formsAttr.forEach((item) => {
-      const $item = $(`<a class="dropdown-item" href="?id=${item.id}"></a>`).appendTo('.form-action-menu')
-      const $title = $(`<span>${item.name || $L('默认布局')}</span>`).appendTo($item)
-      if (!item.name) $title.addClass('text-muted')
+  wpc.formsAttr.forEach((item) => {
+    const $item = $(`<a class="dropdown-item" href="?id=${item.id}"></a>`).appendTo('.form-action-menu')
+    const $title = $(`<span>${item.name || $L('默认布局')}</span>`).appendTo($item)
+    if (!item.name) $title.addClass('text-muted')
 
-      const $action = $(`<div class="action"><span title="${$L('修改')}"><i class="zmdi zmdi-edit"></i></span></div>`).appendTo($item)
-      $action.find('span').on('click', (e) => {
-        $stopEvent(e, true)
-        renderRbcomp(<DlgNForm entity={wpc.entityName} id={item.id} name={item.name} attrs={item.shareTo} />)
-        $('.form-action-menu').prev().dropdown('toggle') // hide
-      })
-
-      if (rb.commercial < 1) $action.find('span').remove()
-      if (wpc.formConfig.id === item.id) $item.addClass('check')
+    const $action = $(`<div class="action"><span title="${$L('修改')}"><i class="zmdi zmdi-edit"></i></span></div>`).appendTo($item)
+    $action.find('span').on('click', (e) => {
+      $stopEvent(e, true)
+      renderRbcomp(<DlgNForm entity={wpc.entityName} id={item.id} name={item.name} attrs={item.shareTo} />)
+      $('.form-action-menu').prev().dropdown('toggle') // hide
     })
+
+    if (wpc.formConfig.id === item.id) $item.addClass('check')
+  })
   // 无
   if (!wpc.formConfig.id) {
     $(`<a class="dropdown-item text-disabled">${$L('无')}</a>`).appendTo('.form-action-menu')
@@ -202,11 +195,6 @@ $(document).ready(() => {
   })()
 
   $('.nav-tabs-classic a[href="#adv-control"]').on('click', (e) => {
-    if (rb.commercial < 10) {
-      e.preventDefault()
-      RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-      return false
-    }
 
     // 只显示布局的
     const shows = []

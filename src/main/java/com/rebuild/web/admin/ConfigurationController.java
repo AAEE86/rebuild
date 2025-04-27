@@ -347,9 +347,6 @@ public class ConfigurationController extends BaseController {
 
     @GetMapping("integration/dingtalk")
     public ModelAndView pageIntegrationDingtalk() {
-        RbAssert.isCommercial(
-                Language.L("免费版不支持钉钉集成 [(查看详情)](https://getrebuild.com/docs/rbv-features)"));
-
         ModelAndView mv = createModelAndView("/admin/integration/dingtalk");
         for (ConfigurationItem item : ConfigurationItem.values()) {
             String name = item.name();
@@ -385,9 +382,6 @@ public class ConfigurationController extends BaseController {
 
     @GetMapping("integration/wxwork")
     public ModelAndView pageIntegrationWxwork() {
-        RbAssert.isCommercial(
-                Language.L("免费版不支持企业微信集成 [(查看详情)](https://getrebuild.com/docs/rbv-features)"));
-
         ModelAndView mv = createModelAndView("/admin/integration/wxwork");
         for (ConfigurationItem item : ConfigurationItem.values()) {
             String name = item.name();
@@ -422,9 +416,6 @@ public class ConfigurationController extends BaseController {
 
     @GetMapping("integration/feishu")
     public ModelAndView pageIntegrationFeishu() {
-        RbAssert.isCommercial(
-                Language.L("免费版不支持飞书集成 [(查看详情)](https://getrebuild.com/docs/rbv-features)"));
-
         ModelAndView mv = createModelAndView("/admin/integration/feishu");
         for (ConfigurationItem item : ConfigurationItem.values()) {
             String name = item.name();

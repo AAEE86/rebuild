@@ -31,7 +31,6 @@ public class CNMapChart extends ChartData {
 
     @Override
     public JSON build() {
-        RbAssert.isCommercial(Language.L("免费版不支持此图表"));
 
         Dimension[] dims = getDimensions();
         Dimension dim1 = dims[0];

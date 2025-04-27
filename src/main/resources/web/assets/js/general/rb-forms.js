@@ -518,10 +518,6 @@ class RbForm extends React.Component {
                 <a
                   className="dropdown-item"
                   onClick={() => {
-                    if (rb.commercial < 10) {
-                      return RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-                    }
-
                     const fields = []
                     _ProTable.state.formFields.forEach((item) => {
                       if (item.readonly === false && !['IMAGE', 'FILE', 'AVATAR', 'SIGN'].includes(item.type)) {
@@ -1817,11 +1813,6 @@ class RbFormImage extends RbFormElement {
   _fileClick(e, forceType) {
     if (this._captureType === 2 || forceType === 2) {
       e && $stopEvent(e, true)
-      if (rb.commercial < 1) {
-        RbHighbar.error(WrapHtml($L('免费版不支持此功能 [(查看详情)](https://getrebuild.com/docs/rbv-features)')))
-        return
-      }
-
       const w = $(window).width() <= 1280 ? 768 : 1024
       renderRbcomp(
         <MediaCapturer
