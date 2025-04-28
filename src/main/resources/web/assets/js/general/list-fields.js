@@ -198,8 +198,13 @@ class ShowStyles2 extends ShowStyles {
         <div className="form-group row">
           <label className="col-sm-3 col-form-label text-sm-right">{$L('默认宽度')}</label>
           <div className="col-sm-7" ref={(c) => (this._$width = c)}>
-            <input className="bslider form-control form-control-sm" type="text" data-slider-min="0" data-slider-max="500" data-slider-step="10" />
-            <div className="form-text mt-0">{$L('默认')}</div>
+            <input className="bslider form-control form-control-sm" type="text" data-slider-min="0" data-slider-max="500" data-slider-step="1" />
+            <div className="d-flex align-items-center mt-1">
+              <div className="form-text mt-0 flex-grow-1">{$L('默认')}</div>
+              <div className="input-group input-group-sm width-input" style={{width: '80px'}}>
+                <input type="number" className="form-control" min="0" max="500" step="1" placeholder={$L('宽度')} />
+              </div>
+            </div>
           </div>
         </div>
         {canSort && (
@@ -228,8 +233,16 @@ class ShowStyles2 extends ShowStyles {
 
     const $w = $(this._$width)
     const $tip = $w.find('.form-text')
+    const $numInput = $w.find('.width-input input')
     const that = this
-    $w.find('input')
+    
+    // 设置初始值
+    if (this.props.width) {
+      $numInput.val(this.props.width)
+      $tip.html(`${$L('宽度')} <b>${this.props.width}</b>`)
+    }
+    
+    const slider = $w.find('input.bslider')
       .slider({ value: this.props.width || 0 })
       .on('change', function (e) {
         let v = e.value.newValue
@@ -238,12 +251,27 @@ class ShowStyles2 extends ShowStyles {
           () => {
             if (v === 0) $tip.html($L('默认'))
             else $tip.html(`${$L('宽度')} <b>${v}</b>`)
+            $numInput.val(v > 0 ? v : '')
             that._width = v
           },
           200,
           'bslider-change'
         )
       })
+      
+    // 监听数字输入框变化
+    $numInput.on('input', function() {
+      let v = parseInt($(this).val()) || 0
+      // 限制最大值为500
+      if (v > 500) {
+        v = 500
+        $(this).val(500)
+      }
+      slider.slider('setValue', v)
+      if (v === 0) $tip.html($L('默认'))
+      else $tip.html(`${$L('宽度')} <b>${v}</b>`)
+      that._width = v
+    })
 
     if (this.props.width) {
       $tip.html(`${$L('宽度')} <b>${this.props.width}</b>`)
