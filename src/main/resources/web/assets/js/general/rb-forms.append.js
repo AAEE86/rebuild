@@ -48,8 +48,15 @@ class ClassificationSelector extends React.Component {
                   onKeyPress={(e) => e.key === 'Enter' && this.performSearch()}
                 />
                 <span className="input-group-btn">
-                  <button className="btn btn-secondary" type="button" onClick={() => this.performSearch()}>
-                    <i className="icon zmdi zmdi-search"></i>
+                  {/* 添加清除按钮 */}
+                  <button 
+                    className="btn btn-secondary" 
+                    type="button" 
+                    onClick={() => this.setState({ searchQuery: '', searchResults: [] })}
+                    style={{ borderRadius: 0 }}
+                    title={$L('清除')}
+                  >
+                    <i className="icon zmdi zmdi-close"></i>
                   </button>
                 </span>
               </div>

@@ -6047,7 +6047,6 @@ div.formula-code {
   padding: 8px 12px;
   background-color: #f8f9fa;
   border-radius: 4px;
-  margin-top: 15px;
 }
 
 .selected-path-text {
@@ -6060,7 +6059,6 @@ div.formula-code {
 }
 
 .search-results {
-  max-height: 300px;
   overflow-y: auto;
   border: 1px solid #eee;
   flex: 1;
