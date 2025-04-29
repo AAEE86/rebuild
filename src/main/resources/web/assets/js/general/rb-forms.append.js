@@ -242,30 +242,36 @@ class ClassificationSelector extends React.Component {
 
       const s = this.state.datas
       s[level] = res.data
-      this.setState({ datas: s })
+      this.setState({ datas: s }, () => {
+        // 当该层级只有一个选项时自动选择
+        if (res.data && res.data.length === 1) {
+          this.selectItem(level, res.data[0])
+        }
+      })
     })
   }
 
   confirm() {
-    // 获取最后一级选中的值
-    let lastSelectedLevel = -1;
-    for (let i = this.state.openLevel; i >= 0; i--) {
-      if (this.state.selectedItems[i]) {
-        lastSelectedLevel = i;
+    // 检查是否所有级别都已选择
+    let allLevelsSelected = true;
+    for (let i = 0; i <= this.state.openLevel; i++) {
+      if (!this.state.selectedItems[i]) {
+        allLevelsSelected = false;
         break;
       }
     }
     
-    if (lastSelectedLevel === -1) {
-      RbHighbar.create($L('请选择%s', this.props.label))
+    if (!allLevelsSelected) {
+      RbHighbar.create($L('请选择所有级别的%s', this.props.label))
       return;
     }
     
-    const selectedId = this.state.selectedItems[lastSelectedLevel];
+    // 获取最后一级选中的值
+    const selectedId = this.state.selectedItems[this.state.openLevel];
     const selectedTexts = [];
     
     // 获取所有已选中项的文本
-    for (let i = 0; i <= lastSelectedLevel; i++) {
+    for (let i = 0; i <= this.state.openLevel; i++) {
       if (this.state.selectedItems[i]) {
         const selectedData = (this.state.datas[i] || []).find(item => item[0] === this.state.selectedItems[i]);
         if (selectedData) {
