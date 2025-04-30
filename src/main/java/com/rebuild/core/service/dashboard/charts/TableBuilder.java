@@ -48,6 +48,13 @@ public class TableBuilder {
             return null;
         }
 
+        // 新增：按维度1（第一列）排序
+        java.util.Arrays.sort(rows, (a, b) -> {
+            String valA = a[0] != null ? a[0].toString() : "";
+            String valB = b[0] != null ? b[0].toString() : "";
+            return valA.compareTo(valB);
+        });
+
         List<Axis> axes = new ArrayList<>();
         if (chart.isShowLineNumber()) {
             axes.add(LN_REF);
