@@ -586,13 +586,42 @@ public abstract class ChartData extends SetUser implements ChartSpec {
         // 2.数据合并
         int startIndex = getDimensions().length;
         List<Object[]> dataRawList = new ArrayList<>();
-        for (AxisEntry[] group : merged.values()) {
-            AxisEntry keyItem = group[0];
-            for (AxisEntry item : group) {
-                if (keyItem != null) break;
-                keyItem = item;
+        
+        // 按照维度1的值进行排序，确保相同维度1的记录放在一起
+        List<String> sortedKeys = new ArrayList<>(merged.keySet());
+        Collections.sort(sortedKeys, (k1, k2) -> {
+            AxisEntry[] group1 = merged.get(k1);
+            AxisEntry[] group2 = merged.get(k2);
+            
+            // 找到第一个非空的AxisEntry
+            AxisEntry e1 = null, e2 = null;
+            for (AxisEntry e : group1) if (e != null) { e1 = e; break; }
+            for (AxisEntry e : group2) if (e != null) { e2 = e; break; }
+            
+            if (e1 == null || e2 == null) return 0;
+            
+            // 比较维度1的值
+            Object[] keyRaw1 = e1.getKeyRaw();
+            Object[] keyRaw2 = e2.getKeyRaw();
+            
+            if (keyRaw1.length > 0 && keyRaw2.length > 0) {
+                String dim1 = keyRaw1[0] == null ? "" : keyRaw1[0].toString();
+                String dim2 = keyRaw2[0] == null ? "" : keyRaw2[0].toString();
+                return dim1.compareTo(dim2);
             }
-
+            
+            return 0;
+        });
+        
+        for (String key : sortedKeys) {
+            AxisEntry[] group = merged.get(key);
+            
+            // 找到第一个非空的AxisEntry
+            AxisEntry keyItem = null;
+            for (AxisEntry e : group) if (e != null) { keyItem = e; break; }
+            
+            if (keyItem == null) continue;
+            
             Object[] data = keyItem.getKeyRaw();
             data = Arrays.copyOf(data, startIndex + indexAndSize);
 
