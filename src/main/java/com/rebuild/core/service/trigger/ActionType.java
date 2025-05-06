@@ -9,6 +9,7 @@ package com.rebuild.core.service.trigger;
 
 import com.rebuild.core.service.trigger.impl.AutoAssign;
 import com.rebuild.core.service.trigger.impl.AutoShare;
+import com.rebuild.core.service.trigger.impl.AutoTransform;
 import com.rebuild.core.service.trigger.impl.FieldAggregation;
 import com.rebuild.core.service.trigger.impl.FieldWriteback;
 import com.rebuild.core.service.trigger.impl.GroupAggregation;
@@ -36,7 +37,7 @@ public enum ActionType {
     AUTOASSIGN("自动分配", AutoAssign.class),
     AUTOSHARE("自动共享", AutoShare.class),
     AUTOUNSHARE("自动取消共享", "com.rebuild.rbv.trigger.AutoUnshare"),
-    AUTOTRANSFORM("自动记录转换", "com.rebuild.rbv.trigger.AutoTransform"),
+    AUTOTRANSFORM("自动记录转换", AutoTransform.class),
     AUTODELETE("自动删除", "com.rebuild.rbv.trigger.AutoDelete"),
     CREATEFEED("新建动态", "com.rebuild.rbv.trigger.CreateFeed"),
     CREATETASK("新建任务", "com.rebuild.rbv.trigger.CreateTask"),

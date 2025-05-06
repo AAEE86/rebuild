@@ -21,6 +21,7 @@ import com.rebuild.core.DefinedException;
 import com.rebuild.core.configuration.general.LiteFormBuilder;
 import com.rebuild.core.metadata.MetadataHelper;
 import com.rebuild.core.metadata.EntityHelper;
+import com.rebuild.core.metadata.easymeta.EasyMetaFactory;
 import com.rebuild.core.service.general.EntityService;
 import com.rebuild.core.service.trigger.DataValidateException;
 import com.rebuild.core.service.general.RepeatedRecordsException;
@@ -38,7 +39,6 @@ import javax.servlet.http.HttpServletRequest;
 @RestController
 @RequestMapping("/app/entity/liteform")
 public class LiteFormController extends EntityController {
-    private static final String DEFAULT_ICON = "file-text";
     private static final int ERROR_CODE = 400;
     private static final String ENTITY_KEY = "entity";
     private static final String ID_KEY = "id";
@@ -185,10 +185,10 @@ public class LiteFormController extends EntityController {
 
         JSONObject entityMeta = new JSONObject();
         entityMeta.put(ENTITY_KEY, entity.getName());
-        entityMeta.put("entityLabel", entity.getPhysicalName());
+        entityMeta.put("entityLabel", EasyMetaFactory.valueOf(entity).getLabel());
         entityMeta.put("entityCode", entity.getEntityCode());
-        entityMeta.put("icon", getEntityIcon(entity));
-        
+        entityMeta.put("icon", EasyMetaFactory.valueOf(entity).getIcon());
+
         String detailEntity = getDetailEntity(entity);
         if (detailEntity != null) {
             entityMeta.put("detailEntity", detailEntity);
@@ -199,11 +199,9 @@ public class LiteFormController extends EntityController {
         return result;
     }
     
-    private String getEntityIcon(Entity entity) {
-        return DEFAULT_ICON;
-    }
-    
     private String getDetailEntity(Entity entity) {
-        return null;
+        // 如果该实体有明细实体，则返回明细实体的名称，否则返回 null
+        Entity detail = entity.getDetailEntity();
+        return detail != null ? detail.getName() : null;
     }
 }

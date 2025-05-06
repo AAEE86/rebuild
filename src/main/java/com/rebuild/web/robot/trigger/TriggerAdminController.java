@@ -241,7 +241,8 @@ public class TriggerAdminController extends BaseController {
             
             JSONObject item = new JSONObject();
             item.put("id", cb.getID("id"));
-            item.put("name", cb.getString("name"));
+            item.put("text", cb.getString("name"));
+            item.put("disabled", false);
             transforms.add(item);
         }
         
