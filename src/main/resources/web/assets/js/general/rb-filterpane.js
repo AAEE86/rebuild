@@ -361,6 +361,13 @@ var FilterItem4Pane = function(_FilterItem) {
                     }
                 }, $L("本月")), React.createElement("button", {
                     type: "button",
+                    className: "btn btn-secondary ".concat(this.state.op4 === "PUM" && "active"),
+                    "data-op": "PUM",
+                    onClick: function onClick(e) {
+                        return _this6._handleQuickOp(e)
+                    }
+                }, $L("上月")), React.createElement("button", {
+                    type: "button",
                     className: "btn btn-secondary ".concat(this.state.op4 === "CUY" && "active"),
                     "data-op": "CUY",
                     onClick: function onClick(e) {
@@ -379,8 +386,22 @@ var FilterItem4Pane = function(_FilterItem) {
                             $(_this6._$datetimeFilter).find("input:eq(0)")[0].focus()
                         })
                     }
-                }, $L("自定"))), valComp))
+                }, $L("自定"))), this.state.datetimeRange && React.createElement("div", {
+                    className: "d-flex"
+                }, valComp, React.createElement("button", {
+                    type: "button",
+                    className: "btn btn-sm btn-secondary ml-1",
+                    style: { alignSelf: "flex-start" },
+                    onClick: function onClick() {
+                        _this6.setState({
+                            datetimeRange: false
+                        })
+                    }
+                }, React.createElement("i", {
+                    className: "icon zmdi zmdi-arrow-left"
+                }), " ", $L("返回")))))
             }
+
             return React.createElement(RF, null, React.createElement("label", null, this.props.fieldLabel), valComp)
         }
     }, {
