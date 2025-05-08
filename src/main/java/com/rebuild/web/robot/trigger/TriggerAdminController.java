@@ -9,6 +9,7 @@ package com.rebuild.web.robot.trigger;
 
 import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.engine.ID;
+import cn.devezhao.commons.CalendarUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONArray;
@@ -25,6 +26,7 @@ import com.rebuild.core.service.trigger.ActionFactory;
 import com.rebuild.core.service.trigger.ActionType;
 import com.rebuild.core.service.trigger.TriggerAction;
 import com.rebuild.core.support.i18n.Language;
+import com.rebuild.core.support.CommonsLog;
 import com.rebuild.utils.JSONUtils;
 import com.rebuild.web.BaseController;
 import com.rebuild.web.admin.ConfigCommons;
@@ -247,5 +249,40 @@ public class TriggerAdminController extends BaseController {
         }
         
         return RespBody.ok(transforms);
+    }
+
+    /**
+     * 获取触发器最近执行日志
+     *
+     * @param request
+     * @return
+     */
+    @GetMapping("trigger/last-logs")
+    public RespBody getLastLogs(HttpServletRequest request) {
+        ID configId = getIdParameterNotNull(request, "id");
+        
+        // 查询最近30天的日志
+        String sql = "select logTime,logContent from CommonsLog where type = ? and source = ? and logTime > ? order by logTime desc";
+        Object[][] array = Application.createQueryNoFilter(sql)
+                .setParameter(1, CommonsLog.TYPE_TRIGGER)
+                .setParameter(2, configId)
+                .setParameter(3, CalendarUtils.addDay(-30))
+                .setLimit(100)
+                .array();
+        
+        JSONObject ret = new JSONObject();
+        JSONArray logs = new JSONArray();
+        
+        for (Object[] o : array) {
+            JSONArray item = new JSONArray();
+            item.add(CalendarUtils.getUTCDateTimeFormat().format(o[0]));
+            item.add(o[1]);
+            logs.add(item);
+        }
+        
+        ret.put("logs", logs);
+        ret.put("count", array.length);
+        
+        return RespBody.ok(ret);
     }
 }
