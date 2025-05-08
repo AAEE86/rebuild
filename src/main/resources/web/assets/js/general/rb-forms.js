@@ -667,7 +667,6 @@ class RbForm extends React.Component {
   setAutoFillin(data) {
     if (!data || data.length === 0) return
 
-    this._inAutoFillin = true
     data.forEach((item) => {
       const fieldComp = this.getFieldComp(item.target)
       if (fieldComp) {
@@ -676,7 +675,6 @@ class RbForm extends React.Component {
         if ((this.isNew && item.whenCreate) || (!this.isNew && item.whenUpdate)) fieldComp.setValue(item.value)
       }
     })
-    this._inAutoFillin = false
   }
 
   // 设置字段值
@@ -2250,6 +2248,17 @@ class RbFormReference extends RbFormElement {
     if (this.props.onView) return
 
     const id = value && typeof value === 'object' ? value.id : value
+    // fix:4.0.4 死循环
+    this.__infiniteLoop = this.__infiniteLoop || {}
+    this.__infiniteLoop[id] = (this.__infiniteLoop[id] || 0) + 1
+    if (this.__infiniteLoop[id] > 2) {
+      console.log('Infinite loop [triggerAutoFillin] ...', id)
+      return
+    }
+    setTimeout(() => {
+      this.__infiniteLoop = {}
+    }, 2000)
+
     const $$$form = this.props.$$$parent
     let formData = null
     if (this.props.fillinWithFormData) {
