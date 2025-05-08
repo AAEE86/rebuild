@@ -847,7 +847,8 @@ body.view-body {
 }
 
 .select2.select2-container {
-  width: 100%;
+  width: auto;
+  min-width: 227px;
 }
 
 .select2-container--default .select2-selection--multiple .select2-selection__choice {
