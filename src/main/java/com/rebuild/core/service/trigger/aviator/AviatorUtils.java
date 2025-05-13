@@ -75,6 +75,7 @@ public class AviatorUtils {
         addCustomFunction(new TextFunction());
         addCustomFunction(new IsNullFunction());
         addCustomFunction(new ChineseDateFunction());
+        addCustomFunction(new SqlQueryFunction());
     }
 
     /**
