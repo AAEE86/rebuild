@@ -12,19 +12,20 @@ import cn.devezhao.persist4j.Field;
 import cn.devezhao.persist4j.engine.ID;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.rebuild.core.Application;
 import com.rebuild.core.configuration.general.ClassificationManager;
 import com.rebuild.core.configuration.general.MultiSelectManager;
 import com.rebuild.core.configuration.general.PickListManager;
 import com.rebuild.core.metadata.EntityHelper;
-import com.rebuild.core.metadata.MetadataHelper;
 import com.rebuild.core.metadata.easymeta.DisplayType;
 import com.rebuild.core.metadata.easymeta.EasyField;
 import com.rebuild.core.metadata.easymeta.EasyMetaFactory;
 import com.rebuild.core.support.i18n.Language;
+import com.rebuild.core.support.general.FieldValueHelper;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 /**
  * 字段值丰富服务 - 处理字段值的显示和转换
@@ -33,6 +34,9 @@ import java.util.Iterator;
  * @since 2023/05/20
  */
 public class FieldValueEnricher {
+    
+    // 缓存处理过的实体标签，提高性能
+    private final Map<ID, String> entityLabelCache = new HashMap<>();
     
     /**
      * 补充字段名称和丰富字段值显示
@@ -88,25 +92,27 @@ public class FieldValueEnricher {
         DisplayType dt = easyField.getDisplayType();
         Field field = easyField.getRawMeta();
         
-        // 处理引用字段
-        if (dt == DisplayType.REFERENCE) {
-            enrichIdFieldValue(item, "before");
-            enrichIdFieldValue(item, "after");
-        }
-        // 处理下拉列表字段
-        else if (dt == DisplayType.PICKLIST) {
-            enrichPicklistValue(item, "before");
-            enrichPicklistValue(item, "after");
-        }
-        // 处理多选字段
-        else if (dt == DisplayType.MULTISELECT) {
-            enrichMultiselectValue(item, "before", field);
-            enrichMultiselectValue(item, "after", field);
-        }
-        // 处理分类字段
-        else if (dt == DisplayType.CLASSIFICATION) {
-            enrichClassificationValue(item, "before");
-            enrichClassificationValue(item, "after");
+        // 根据字段类型选择相应的处理方法
+        switch (dt) {
+            case REFERENCE:
+                enrichIdFieldValue(item, "before");
+                enrichIdFieldValue(item, "after");
+                break;
+            case PICKLIST:
+                enrichPicklistValue(item, "before");
+                enrichPicklistValue(item, "after");
+                break;
+            case MULTISELECT:
+                enrichMultiselectValue(item, "before", field);
+                enrichMultiselectValue(item, "after", field);
+                break;
+            case CLASSIFICATION:
+                enrichClassificationValue(item, "before");
+                enrichClassificationValue(item, "after");
+                break;
+            default:
+                // 其他类型不需要特殊处理
+                break;
         }
     }
     
@@ -180,7 +186,7 @@ public class FieldValueEnricher {
     }
     
     /**
-     * 获取实体记录的标签（名称）
+     * 获取实体记录的标签（名称），使用缓存提高性能
      * 
      * @param recordId 记录ID
      * @return 记录标签
@@ -188,16 +194,26 @@ public class FieldValueEnricher {
     private String getEntityLabel(ID recordId) {
         if (recordId == null) return null;
         
+        // 先从缓存中查找
+        if (entityLabelCache.containsKey(recordId)) {
+            return entityLabelCache.get(recordId);
+        }
+        
         try {
-            Entity entity = MetadataHelper.getEntity(recordId.getEntityCode());
-            String nameField = entity.getNameField().getName();
-            Object[] o = Application.createQueryNoFilter(
-                    "select " + nameField + " from " + entity.getName() + " where " + entity.getPrimaryField().getName() + " = ?")
-                    .setParameter(1, recordId)
-                    .unique();
-            return o == null ? null : o[0].toString();
+            // 使用 FieldValueHelper.getLabelNotry 方法获取记录标签
+            String label = FieldValueHelper.getLabelNotry(recordId);
+            // 缓存结果
+            entityLabelCache.put(recordId, label);
+            return label;
         } catch (Exception e) {
             return null;
         }
+    }
+    
+    /**
+     * 清除缓存
+     */
+    public void clearCache() {
+        entityLabelCache.clear();
     }
 }
