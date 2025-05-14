@@ -22,6 +22,8 @@ import com.rebuild.core.configuration.general.AutoFillinManager;
 import com.rebuild.core.metadata.MetadataHelper;
 import com.rebuild.core.metadata.easymeta.EasyEntity;
 import com.rebuild.core.metadata.easymeta.EasyMetaFactory;
+import com.rebuild.core.metadata.EntityHelper;
+import com.rebuild.core.metadata.easymeta.EasyField;
 import com.rebuild.core.privileges.UserHelper;
 import com.rebuild.core.privileges.bizz.User;
 import com.rebuild.core.service.general.RepeatedRecordsException;
@@ -48,6 +50,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Iterator;
 
 /**
  * 表单/视图 功能扩展
@@ -190,31 +193,59 @@ public class ModelExtrasController extends BaseController {
     }
 
     @GetMapping("record-history")
-    public JSONAware fetchRecordHistory(@IdParam ID id) {
+    public JSON detailsList(@IdParam ID recordId) {
+        if (recordId == null) return JSONUtils.EMPTY_ARRAY;
+
         Object[][] array = Application.createQueryNoFilter(
-                "select revisionType,revisionOn,revisionBy,channelWith from RevisionHistory where recordId = ? order by autoId desc")
-                .setParameter(1, id)
-                .setLimit(100)
+                "select revisionContent,revisionType,revisionOn,revisionBy.fullName from RevisionHistory where recordId = ? order by autoId desc")
+                .setParameter(1, recordId)
+                .setLimit(500)
                 .array();
 
-        for (Object[] o : array) {
-            int revType = (int) o[0];
-            if (revType == 1) o[0] = Language.L("新建");
-            else if (revType == 2) o[0] = Language.L("删除");
-            else if (revType == 4) o[0] = Language.L("更新");
-            else if (revType == 16) o[0] = Language.L("分配");
-            else if (revType == 32) o[0] = Language.L("共享");
-            else if (revType == 64) o[0] = Language.L("取消共享");
-            else if (revType == 991) o[0] = Language.L("审批通过");
-            else if (revType == 992) o[0] = Language.L("审批撤销");
-            else o[0] = Language.L("其他") + String.format(" (%d)", revType);
+        List<Object> list = new ArrayList<>();
+        Entity entity = MetadataHelper.getEntity(recordId.getEntityCode());
 
-            o[1] = I18nUtils.formatDate((Date) o[1]);
-            o[2] = new Object[] { o[2], UserHelper.getName((ID) o[2]) };
+        for (Object[] item : array) {
+            JSONArray contents = JSON.parseArray((String) item[0]);
+            paddingFieldsName(contents, entity);
+
+            item[0] = contents;
+            item[2] = I18nUtils.formatDate((Date) item[2]);
+            list.add(item);
         }
+        
+        return (JSON) JSON.toJSON(list);
+    }
 
-        return JSONUtils.toJSONObjectArray(
-                new String[] { "revisionType", "revisionOn", "revisionBy" }, array);
+    // 补充字段名称
+    private void paddingFieldsName(JSONArray contents, Entity entity) {
+        final int entityCode = entity.getEntityCode();
+        for (Iterator<Object> iter = contents.iterator(); iter.hasNext(); ) {
+            JSONObject item = (JSONObject) iter.next();
+            String fieldName = item.getString("field");
+
+            if (entity.containsField(fieldName)) {
+                EasyField easyField = EasyMetaFactory.valueOf(entity.getField(fieldName));
+                // 排除不可查询字段
+                if (!easyField.isQueryable()) {
+                    if (fieldName.equalsIgnoreCase("contentMore") && entityCode == EntityHelper.Feeds) {
+                        // 保留
+                    } else {
+                        iter.remove();
+                        continue;
+                    }
+                }
+
+                fieldName = easyField.getLabel();
+            } else {
+                if ("SHARETO".equalsIgnoreCase(fieldName)) {
+                    fieldName = Language.L("共享用户");
+                } else {
+                    fieldName = "[" + fieldName.toUpperCase() + "]";
+                }
+            }
+            item.put("field", fieldName);
+        }
     }
 
     @GetMapping("check-creates")

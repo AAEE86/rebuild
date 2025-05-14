@@ -11,6 +11,18 @@ const wpc = window.__PageConfig || {}
 const TYPE_DIVIDER = '$DIVIDER$'
 const TYPE_REFFORM = '$REFFORM$'
 
+// 操作类型
+const RevTypes = {
+  1: $L('新建'),
+  2: $L('删除'),
+  4: $L('更新'),
+  16: $L('分配'),
+  32: $L('共享'),
+  64: $L('取消共享'),
+  991: $L('审批通过'),
+  992: $L('审批撤销'),
+}
+
 //~~ 视图
 class RbViewForm extends React.Component {
   constructor(props) {
@@ -763,42 +775,128 @@ const RbViewPage = {
     const $into = $('.view-history .view-history-items')
     if ($into.length === 0) return
 
+    // 用于存储ID和标签的映射
+    const _LabelOfId = {}
+    
+    // 获取ID对应的标签
+    const _LabelOfIdGet = (id) => {
+      if (!window.FrontJS) return id
+      if (_LabelOfId[id]) return _LabelOfId[id]
+      
+      let label = window.FrontJS.getText(id)
+      if (label) {
+        return `<span title="${id}">${label}</span>`
+      } else {
+        return id
+      }
+    }
+    
+    // 格式化值的函数
+    const _formatValue = (v, isOld) => {
+      let val
+      if (v === true) val = $L('是')
+      else if (v === false) val = $L('否')
+      else if (v === 0) val = 0
+      else if ($regex.isId(v)) val = _LabelOfIdGet(v)
+      else if (v) val = typeof v === 'object' ? v.join(', ') : v
+      else val = `<span class="text-muted">${$L('空')}</span>`
+      
+      // 添加颜色标记
+      if (isOld !== undefined) {
+        const color = isOld ? 'red' : 'green'
+        return `<span style="color:${color}">${val}</span>`
+      }
+      return val
+    }
+
     $.get(`/app/entity/extras/record-history?id=${this.__id}`, (res) => {
       if (res.error_code !== 0) return
 
-      // v3.8 合并显示
-      let _data = []
-      let prev
-      res.data.forEach((item) => {
-        // 同样的合并
-        if (prev && prev.revisionType === item.revisionType && prev.revisionBy[0] === item.revisionBy[0]) {
-          let diff = $moment(item.revisionOn).diff($moment(prev.revisionOn), 'seconds')
-          if (Math.abs(diff) < 30) {
-            prev._merged = (prev._merged || 1) + 1
-            return
-          }
-        }
-        _data.push(item)
-        prev = item
-      })
-
       $into.empty()
-      _data.forEach((item, idx) => {
-        let content = $L('**%s** 由 %s %s', $fromNow(item.revisionOn), item.revisionBy[1], item.revisionType)
-        if (item._merged > 1) content += ` <sup>${item._merged}</sup>`
-
-        const $item = $(`<li>${content}</li>`).appendTo($into)
-        $item.find('b:eq(0)').attr('title', item.revisionOn)
-        if (idx > 9) $item.addClass('hide')
+      
+      // 按日期分组
+      const groupedByDate = {}
+      
+      // 处理每一条历史记录
+      res.data && res.data.forEach((item) => {
+        // 获取日期部分和时间部分
+        const dateTime = item[2].split(' UTC')[0].split(' ')
+        const date = dateTime[0]
+        const time = dateTime[1]
+        const user = item[3]
+        const revType = RevTypes[item[1]] || item[1]
+        
+        // 初始化日期组
+        if (!groupedByDate[date]) {
+          groupedByDate[date] = []
+        }
+        
+        // 处理内容变更
+        const contents = item[0]
+        if (contents && contents.length > 0) {
+          // 为每个字段变更创建一个列表项
+          contents.forEach((change) => {
+            if ($same(change.after, change.before)) return
+            
+            const fieldName = change.field
+            const blueFieldName = `<span style="color:blue">${fieldName}</span>`
+            const beforeVal = change.before === null || change.before === '' ? $L('空') : _formatValue(change.before, true)
+            const afterVal = change.after === null || change.after === '' ? $L('空') : _formatValue(change.after, false)
+            
+            // 创建格式化的内容
+            const content = {
+              time: time,
+              user: user,
+              revType: revType,
+              fieldName: blueFieldName,
+              beforeVal: beforeVal,
+              afterVal: afterVal,
+              isUpdate: revType === $L('更新')
+            }
+            
+            groupedByDate[date].push(content)
+          })
+        } else {
+          // 如果没有具体内容变更（如新建记录）
+          const content = {
+            time: time,
+            user: user,
+            revType: revType,
+            isUpdate: false
+          }
+          
+          groupedByDate[date].push(content)
+        }
+      })
+      
+      // 渲染分组后的历史记录
+      let totalItems = 0
+      Object.keys(groupedByDate).sort().reverse().forEach(date => {
+        // 添加日期
+        $(`<li class="date-header">${date}</li>`).appendTo($into)
+        
+        // 添加该日期下的所有记录
+        groupedByDate[date].forEach((item, idx) => {
+          let content
+          if (item.isUpdate) {
+            content = `· ${item.time} ${item.user} ${$L('将')} ${item.fieldName} ${$L('由')} ${item.beforeVal} ${$L('改为')} ${item.afterVal}`
+          } else {
+            content = `· ${item.time} ${item.user} ${item.revType}`
+          }
+          
+          const $item = $(`<li>${content}</li>`).appendTo($into)
+          totalItems++
+          if (totalItems > 10) $item.addClass('hide')
+        })
       })
 
-      if (_data.length > 10) {
+      if (totalItems > 10) {
         $into.after(`<a href="javascript:;" class="J_mores">${$L('显示更多')}</a>`)
         $('.view-history .J_mores').on('click', function () {
           $into.find('li.hide').removeClass('hide')
           $(this).addClass('hide')
         })
-      } else if (_data.length === 0) {
+      } else if (totalItems === 0) {
         $(`<li>${$L('无')}</li>`).appendTo($into)
       }
 
