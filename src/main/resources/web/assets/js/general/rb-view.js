@@ -797,6 +797,14 @@ const RbViewPage = {
       if (v === true) val = $L('是')
       else if (v === false) val = $L('否')
       else if (v === 0) val = 0
+      else if (Array.isArray(v)) {
+        // 处理数组形式的多个ID
+        const formattedValues = v.map(item => {
+          if ($regex.isId(item)) return _LabelOfIdGet(item)
+          return item
+        })
+        val = formattedValues.join(', ')
+      }
       else if ($regex.isId(v)) val = _LabelOfIdGet(v)
       else if (v) val = typeof v === 'object' ? v.join(', ') : v
       else val = `<span class="text-muted">${$L('空')}</span>`

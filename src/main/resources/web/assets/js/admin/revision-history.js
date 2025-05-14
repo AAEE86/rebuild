@@ -227,6 +227,15 @@ function ContentsGroup({ contents }) {
     if (v === true) return $L('是')
     else if (v === false) return $L('否')
     else if (v === 0) return 0
+    else if (Array.isArray(v)) {
+      // 处理数组形式的多个ID
+      const formattedValues = v.map(item => {
+        if ($regex.isId(item)) return _LabelOfIdGet(item)
+        return item
+      })
+      // 使用逗号分隔返回格式化后的值
+      return <RF>{formattedValues.map((item, idx) => <RF key={idx}>{item}{idx < formattedValues.length - 1 && <span>, </span>}</RF>)}</RF>
+    }
     else if ($regex.isId(v)) return _LabelOfIdGet(v)
     else if (v) return typeof v === 'object' ? v.join(', ') : v
     return <span className="text-muted">{$L('空')}</span>
