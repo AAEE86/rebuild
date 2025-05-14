@@ -11,13 +11,17 @@ import cn.devezhao.persist4j.Entity;
 import cn.devezhao.persist4j.engine.ID;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.rebuild.core.Application;
+import com.rebuild.core.metadata.EntityHelper;
 import com.rebuild.core.metadata.MetadataHelper;
+import com.rebuild.core.metadata.easymeta.EasyField;
+import com.rebuild.core.metadata.easymeta.EasyMetaFactory;
 import com.rebuild.core.support.i18n.I18nUtils;
+import com.rebuild.core.support.i18n.Language;
 import com.rebuild.utils.JSONUtils;
 import com.rebuild.web.EntityController;
 import com.rebuild.web.IdParam;
-import com.rebuild.core.service.general.FieldValueEnricher;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +29,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -49,7 +54,7 @@ public class RevisionHistoryController extends EntityController {
 
         JSONArray contents = JSON.parseArray((String) rev[0]);
         if (MetadataHelper.containsEntity((String) rev[1])) {
-            new FieldValueEnricher().enrichFieldsContent(contents, MetadataHelper.getEntity((String) rev[1]));
+            paddingFieldsName(contents, MetadataHelper.getEntity((String) rev[1]));
         }
 
         return contents;
@@ -72,7 +77,7 @@ public class RevisionHistoryController extends EntityController {
 
             for (Object[] item : array) {
                 JSONArray contents = JSON.parseArray((String) item[0]);
-                new FieldValueEnricher().enrichFieldsContent(contents, entity);
+                paddingFieldsName(contents, entity);
 
                 item[0] = contents;
                 item[2] = I18nUtils.formatDate((Date) item[2]);
@@ -80,5 +85,36 @@ public class RevisionHistoryController extends EntityController {
             }
         }
         return (JSON) JSON.toJSON(list);
+    }
+
+    // 补充字段名称
+    private void paddingFieldsName(JSONArray contents, Entity entity) {
+        final int entityCode = entity.getEntityCode();
+        for (Iterator<Object> iter = contents.iterator(); iter.hasNext(); ) {
+            JSONObject item = (JSONObject) iter.next();
+            String fieldName = item.getString("field");
+
+            if (entity.containsField(fieldName)) {
+                EasyField easyField = EasyMetaFactory.valueOf(entity.getField(fieldName));
+                // 排除不可查询字段
+                if (!easyField.isQueryable()) {
+                    if (fieldName.equalsIgnoreCase("contentMore") && entityCode == EntityHelper.Feeds) {
+                        // 保留
+                    } else {
+                        iter.remove();
+                        continue;
+                    }
+                }
+
+                fieldName = easyField.getLabel();
+            } else {
+                if ("SHARETO".equalsIgnoreCase(fieldName)) {
+                    fieldName = Language.L("共享用户");
+                } else {
+                    fieldName = "[" + fieldName.toUpperCase() + "]";
+                }
+            }
+            item.put("field", fieldName);
+        }
     }
 }

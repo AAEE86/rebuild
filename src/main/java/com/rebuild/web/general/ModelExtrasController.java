@@ -30,12 +30,10 @@ import com.rebuild.core.support.general.CalcFormulaSupport;
 import com.rebuild.core.support.general.EasyFilterEvaluator;
 import com.rebuild.core.support.i18n.I18nUtils;
 import com.rebuild.core.support.i18n.Language;
-import com.rebuild.core.service.general.FieldValueEnricher;
 import com.rebuild.utils.JSONUtils;
 import com.rebuild.web.BaseController;
 import com.rebuild.web.EntityParam;
 import com.rebuild.web.IdParam;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -255,45 +253,6 @@ public class ModelExtrasController extends BaseController {
         Object evalVal = CalcFormulaSupport.evalCalcFormula(entity.getField(targetField), varsInFormula);
         return evalVal == null ? RespBody.ok() : RespBody.ok(evalVal);
     }
-    
-    @GetMapping("record-history-details")
-    public JSONAware fetchRecordHistoryDetails(@IdParam ID id) {
-        final Entity entity = MetadataHelper.getEntity(id.getEntityCode());
-        Object[][] array = Application.createQueryNoFilter(
-                "select revisionContent,revisionType,revisionOn,revisionBy,channelWith from RevisionHistory where recordId = ? order by autoId desc")
-                .setParameter(1, id)
-                .setLimit(100)
-                .array();
-
-        List<Object> list = new ArrayList<>();
-        for (Object[] o : array) {
-            JSONArray contents = JSON.parseArray((String) o[0]);
-            if (contents != null) {
-                // 使用新的服务类处理字段内容
-                new FieldValueEnricher().enrichFieldsContent(contents, entity);
-            }
-            
-            int revType = (int) o[1];
-            if (revType == 1) o[1] = Language.L("新建");
-            else if (revType == 2) o[1] = Language.L("删除");
-            else if (revType == 4) o[1] = Language.L("更新");
-            else if (revType == 16) o[1] = Language.L("分配");
-            else if (revType == 32) o[1] = Language.L("共享");
-            else if (revType == 64) o[1] = Language.L("取消共享");
-            else if (revType == 991) o[1] = Language.L("审批通过");
-            else if (revType == 992) o[1] = Language.L("审批撤销");
-            else o[1] = Language.L("其他") + String.format(" (%d)", revType);
-
-            o[0] = contents;
-            o[2] = I18nUtils.formatDate((Date) o[2]);
-            o[3] = new Object[] { o[3], UserHelper.getName((ID) o[3]) };
-            
-            list.add(o);
-        }
-
-        return (JSON) JSON.toJSON(list);
-    }
-
     /**
      * 评估简易过滤器条件
      * 

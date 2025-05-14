@@ -763,8 +763,7 @@ const RbViewPage = {
     const $into = $('.view-history .view-history-items')
     if ($into.length === 0) return
 
-    // 获取修改历史详情
-    $.get(`/app/entity/extras/record-history-details?id=${this.__id}`, (res) => {
+    $.get(`/app/entity/extras/record-history?id=${this.__id}`, (res) => {
       if (res.error_code !== 0) return
 
       // v3.8 合并显示
@@ -772,8 +771,8 @@ const RbViewPage = {
       let prev
       res.data.forEach((item) => {
         // 同样的合并
-        if (prev && prev[1] === item[1] && prev[3][0] === item[3][0]) {
-          let diff = $moment(item[2]).diff($moment(prev[2]), 'seconds')
+        if (prev && prev.revisionType === item.revisionType && prev.revisionBy[0] === item.revisionBy[0]) {
+          let diff = $moment(item.revisionOn).diff($moment(prev.revisionOn), 'seconds')
           if (Math.abs(diff) < 30) {
             prev._merged = (prev._merged || 1) + 1
             return
@@ -784,50 +783,13 @@ const RbViewPage = {
       })
 
       $into.empty()
-      let currentDate = null
-      let dateContent = []
-      
       _data.forEach((item, idx) => {
-        const [changes, type, time, user] = item
-        
-        // 格式化时间
-        const formatTime = (timeStr) => {
-          const [date, time] = timeStr.split(' UTC')[0].split(' ')
-          return { date, time }
-        }
-        
-        const { date, time: timeStr } = formatTime(time)
-        
-        // 如果日期变化,先渲染之前的内容
-        if (currentDate !== date && dateContent.length > 0) {
-          $(`<li><strong>${currentDate}</strong><br/>${dateContent.join('<br/>')}</li>`).appendTo($into)
-          dateContent = []
-        }
-        
-        currentDate = date
-        
-        if (type === '更新' && Array.isArray(changes) && changes.length > 0) {
-          const formatBooleanValue = (val) => {
-            if (val == null) return '空'
-            return val === true || val === 'true' ? '是' : 
-                   val === false || val === 'false' ? '否' : val
-          }
+        let content = $L('**%s** 由 %s %s', $fromNow(item.revisionOn), item.revisionBy[1], item.revisionType)
+        if (item._merged > 1) content += ` <sup>${item._merged}</sup>`
 
-          changes.forEach(({ field, beforeText, afterText, before, after }) => {
-            const oldValue = formatBooleanValue(beforeText || before)
-            const newValue = formatBooleanValue(afterText || after)
-            dateContent.push(` · ${timeStr} ${user[1]} 将 <span class="text-primary">${field}</span> 由 <span class="text-danger">${oldValue}</span> 修改为 <span class="text-success">${newValue}</span>`)
-          })
-        } else {
-          dateContent.push(` · ${timeStr} ${user[1]} ${type}`)
-        }
-        
-        // 处理最后一条记录
-        if (idx === _data.length - 1) {
-          $(`<li><strong>${currentDate}</strong><br/>${dateContent.join('<br/>')}</li>`).appendTo($into)
-        }
-        
-        if (idx > 9) $into.find('li').last().addClass('hide')
+        const $item = $(`<li>${content}</li>`).appendTo($into)
+        $item.find('b:eq(0)').attr('title', item.revisionOn)
+        if (idx > 9) $item.addClass('hide')
       })
 
       if (_data.length > 10) {
