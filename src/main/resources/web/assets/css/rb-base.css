@@ -23253,7 +23253,3 @@ div.table-responsive > div.dataTables_wrapper > div.row > div[class^='col-']:las
   opacity: 0;
   animation: spinner-grow 0.75s linear infinite;
 }
-
-.btn.btn-sm.btn-secondary.ml-1{
-  line-height: 34.5px;
-}
