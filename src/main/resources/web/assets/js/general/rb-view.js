@@ -859,7 +859,7 @@ const RbViewPage = {
               fieldName: blueFieldName,
               beforeVal: beforeVal,
               afterVal: afterVal,
-              isUpdate: revType === $L('更新')
+              isUpdate: true
             }
             
             groupedByDate[date].push(content)
