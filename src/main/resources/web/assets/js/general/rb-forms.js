@@ -3160,6 +3160,7 @@ class RbFormRefform extends React.Component {
   }
 
   render() {
+    if (!this.props.refvalue) return null
     return (
       <div className={`rbview-form form-layout refform ${window.__LAB_VERTICALLAYOUT && 'vertical38'}`} ref={(c) => (this._viewForm = c)}>
         {this.state.formComponent || 'LOADING'}
