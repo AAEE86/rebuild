@@ -1309,6 +1309,7 @@ class RbFormNumber extends RbFormText {
     const value = this.state.value
     if (!!value && $regex.isDecimal(value) === false) return $L('格式不正确')
     if (!!value && $isTrue(this.props.notNegative) && parseFloat(value) < 0) return $L('不能为负数')
+    if (!!value && $isTrue(this.props.onlyNegative) && parseFloat(value) >= 0) return $L('只能为负数')
     return null
   }
   _isValueError() {

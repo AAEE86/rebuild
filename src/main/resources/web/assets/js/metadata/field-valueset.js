@@ -125,6 +125,9 @@ class FieldValueSet extends React.Component {
       } else if ($isTrue(field.notNegative) && ~~value < 0) {
         RbHighbar.create($L('%s不能为负数', field.label))
         return false
+      } else if ($isTrue(field.onlyNegative) && ~~value >= 0) {
+        RbHighbar.create($L('%s只能为负数', field.label))
+        return false
       }
     } else if (field.type === 'EMAIL') {
       if (!$regex.isMail(value)) {

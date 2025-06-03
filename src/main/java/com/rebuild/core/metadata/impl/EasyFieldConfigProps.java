@@ -39,6 +39,10 @@ public class EasyFieldConfigProps {
      */
     public static final String NUMBER_NOTNEGATIVE = "notNegative";
     /**
+     * 是否只允许负数
+     */
+    public static final String NUMBER_ONLYNEGATIVE = "onlyNegative";
+    /**
      * 格式
      */
     public static final String NUMBER_FORMAT = "numberFormat";

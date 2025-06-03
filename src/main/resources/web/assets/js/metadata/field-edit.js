@@ -885,3 +885,16 @@ class FieldTypeCast extends RbFormHandler {
     })
   }
 }
+
+  // "不允许负数"和"只允许负数"互斥
+  $('#notNegative').on('change', function() {
+    if ($(this).prop('checked')) {
+      $('#onlyNegative').prop('checked', false);
+    }
+  });
+  
+  $('#onlyNegative').on('change', function() {
+    if ($(this).prop('checked')) {
+      $('#notNegative').prop('checked', false);
+    }
+  });
