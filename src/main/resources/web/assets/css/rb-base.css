@@ -23260,10 +23260,10 @@ div.table-responsive > div.dataTables_wrapper > div.row > div[class^='col-']:las
   z-index: 1050;
 }
 
-.modal-content {
+.chart-selector-modal .modal-content {
   max-height: 90vh;
 }
 
-.modal-body {
+.chart-selector-modal .modal-body {
   overflow-y: auto;
 }
