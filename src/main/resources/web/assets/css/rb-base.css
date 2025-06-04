@@ -23254,9 +23254,10 @@ div.table-responsive > div.dataTables_wrapper > div.row > div[class^='col-']:las
   animation: spinner-grow 0.75s linear infinite;
 }
 
-.modal-header.modal-header-colored {
+.modal-header.modal-header-colored,
+.nav.flex-column.nav-pills {
   position: sticky;
-  top: 0;
+  top: 5px;
   z-index: 1050;
 }
 
