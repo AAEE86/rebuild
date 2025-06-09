@@ -9,7 +9,7 @@
   </head>
   <body class="view-body" th:classappend="${!isMember} ? 'readonly'">
     <div class="view-header">
-      <i class="header-icon zmdi" th:classappend="${'zmdi-' + projectIcon}"></i>
+      <!--<i class="header-icon zmdi" th:classappend="${'zmdi-' + projectIcon}"></i>-->
       <h3 class="title">[[${bundle.L('任务详情')}]]</h3>
       <span>
         <a class="close J_close" th:title="${bundle.L('关闭')}"><i class="zmdi zmdi-close"></i></a>
