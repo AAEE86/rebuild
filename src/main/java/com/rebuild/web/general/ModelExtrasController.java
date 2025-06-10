@@ -19,6 +19,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.rebuild.api.RespBody;
 import com.rebuild.core.Application;
 import com.rebuild.core.configuration.general.AutoFillinManager;
+import com.rebuild.core.configuration.general.BaseLayoutManager;
+import com.rebuild.core.configuration.ConfigBean;
 import com.rebuild.core.metadata.MetadataHelper;
 import com.rebuild.core.metadata.easymeta.EasyEntity;
 import com.rebuild.core.metadata.easymeta.EasyMetaFactory;
@@ -284,32 +286,34 @@ public class ModelExtrasController extends BaseController {
         Object evalVal = CalcFormulaSupport.evalCalcFormula(entity.getField(targetField), varsInFormula);
         return evalVal == null ? RespBody.ok() : RespBody.ok(evalVal);
     }
-    /**
-     * 评估简易过滤器条件
-     * 
-     * @param request
-     * @return
-     */
-    @PostMapping("easyfilter-eval")
-    public JSONAware evalEasyFilter(HttpServletRequest request) {
-        final ID user = getRequestUser(request);
-        final String layoutId = getParameterNotNull(request, "layout");
-        final String recordId = getParameter(request, "id");
-        
-        JSONObject formData = (JSONObject) ServletUtils.getRequestJson(request);
-        
-        // 使用服务类评估过滤条件
-        EasyFilterEvaluator evaluator = new EasyFilterEvaluator();
-        List<JSONObject> results = evaluator.evaluateLayoutFilters(layoutId, formData, user, recordId);
-        
-        return (JSONAware) JSON.toJSON(results);
-    }
 
-    /**
-     * 
-     * @param request
-     * @return
-     */
+    // 智能过滤评估
+    @PostMapping("easyfilter-eval")
+    public RespBody easyFilterEval(HttpServletRequest request) {
+        final ID user = getRequestUser(request);
+        final String layoutId = getParameter(request, "layout");
+        final String recordId = getParameter(request, "id", "");
+        
+        if (StringUtils.isBlank(layoutId)) {
+            return RespBody.error("Missing layout parameter");
+        }
+        
+        try {
+            // 获取表单数据
+            JSONObject formData = (JSONObject) ServletUtils.getRequestJson(request);
+            if (formData == null) formData = new JSONObject();
+            
+            // 使用 EasyFilterEvaluator 评估过滤规则
+            EasyFilterEvaluator evaluator = new EasyFilterEvaluator();
+            JSONArray result = evaluator.evaluateEasyFilterByLayout(layoutId, formData, recordId, user);
+            return RespBody.ok(result);
+            
+        } catch (Exception ex) {
+            log.warn("EasyFilter eval failed: {}", ex.getLocalizedMessage());
+            return RespBody.ok(new JSONArray()); // 出错时返回空数组，不影响表单正常使用
+        }
+    }
+    
     @PostMapping("check-easyaction") 
     public JSONAware checkEasyAction(HttpServletRequest request) {
         final ID user = getRequestUser(request);
