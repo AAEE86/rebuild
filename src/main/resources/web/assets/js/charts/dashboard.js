@@ -304,9 +304,9 @@ const add_widget = function (item) {
     item.bgcolor ? `style="background-color:${item.bgcolor}` : ''
   }"></div></div>`
   if (item.size_x || item.size_y) {
-    gridstack.addWidget(gsi, (item.col || 1) - 1, (item.row || 1) - 1, item.size_x || 2, item.size_y || 2, true, 2, 12, hmm[0], hmm[1])
+    gridstack.addWidget(gsi, (item.col || 1) - 1, (item.row || 1) - 1, item.size_x || 2, item.size_y || 2, true, 1, 12, hmm[0], hmm[1])
   } else {
-    gridstack.addWidget(gsi, item.x, item.y, item.w, item.h, item.x === undefined, 2, 12, hmm[0], hmm[1])
+    gridstack.addWidget(gsi, item.x, item.y, item.w, item.h, item.x === undefined, 1, 12, hmm[0], hmm[1])
   }
 
   item.editable = dash_editable

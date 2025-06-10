@@ -7,7 +7,7 @@ See LICENSE and COMMERCIAL in the project root for license information.
 
 .chart-box {
   height: 100%;
-  padding: 20px 25px;
+  padding: 15px 20px;
 }
 
 .chart-box.TREEMAP {
@@ -130,9 +130,8 @@ See LICENSE and COMMERCIAL in the project root for license information.
 }
 
 .chart.index > .data-item strong {
-  font-size: 3.1rem;
-  font-size: 2.5rem;
-  font-weight: 400;
+  font-size: 1.7rem;
+  font-weight: 400; 
 }
 
 .chart.index > .data-item strong > a {
@@ -146,17 +145,17 @@ See LICENSE and COMMERCIAL in the project root for license information.
 .chart.index > .data-item .with p,
 .chart.index > .data-item .with strong {
   display: inline-block;
-  font-size: 1.1rem;
+  font-size: 0.95rem;
 }
 
 .chart.index > .data-item .with strong {
   margin-left: 5px;
   margin-top: 3px;
-  font-size: 1.55rem;
+  font-size: 1.3rem;
 }
 
 .chart.index > .data-item span {
-  font-size: 1.15rem;
+  font-size: 0.95rem;
   margin-left: 2px;
   color: red;
 }
@@ -198,14 +197,15 @@ See LICENSE and COMMERCIAL in the project root for license information.
 .chart.ctable {
   position: relative;
   width: 100%;
-  margin-top: 15px;
+  margin-top: 5px;
 }
 
 .chart.ctable .table td,
 .chart.ctable .table th {
-  padding: 10px 10px;
+  white-space: nowrap;
+  padding: 5px 5px;
   cursor: default;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
 .chart.ctable .table td > div {
