@@ -164,7 +164,7 @@ public class ChartDesignController extends EntityController {
     public JSON dataPreview(HttpServletRequest request) {
         JSON config = ServletUtils.getRequestJson(request);
         ChartData chart = ChartsFactory.create((JSONObject) config, getRequestUser(request));
-        return chart.build(true);
+        return chart.build(false);
     }
 
     @PostMapping("chart-save")
