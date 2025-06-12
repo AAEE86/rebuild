@@ -206,6 +206,7 @@ See LICENSE and COMMERCIAL in the project root for license information.
   padding: 5px 5px;
   cursor: default;
   font-size: 0.95rem;
+  text-align: center;
 }
 
 .chart.ctable .table td > div {
