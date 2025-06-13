@@ -177,6 +177,15 @@ See LICENSE and COMMERCIAL in the project root for license information.
   color: green !important;
 }
 
+.chart.index > .data-item span.eq {
+  color: #666 !important; 
+}
+
+.chart.index > .data-item span.eq::before {
+  content: '\F0374';
+  color: #666 !important;
+}
+
 .grid-stack-item.fullscreen .chart.index > .data-item p {
   font-size: 3rem;
 }
